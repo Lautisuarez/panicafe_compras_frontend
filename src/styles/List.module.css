@@ -1,0 +1,7 @@
+evenRow {
+  background-color: #cacaca;
+}
+
+oddRow {
+  background-color: inherit;
+}
