@@ -1,24 +1,37 @@
 import * as React from "react";
-import { Box, Button, HStack, Input, useNumberInput } from "@chakra-ui/react";
+import { Box, HStack, Input } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
-import styles from "../styles/List.module.css";
+import styles from "../styles/List.css";
 
 const ProdTable = (props) => {
-  const {
-    getInputProps,
-    getIncrementButtonProps,
-    getDecrementButtonProps,
-  } = useNumberInput({
-    step: 1,
-    defaultValue: 0,
-    min: 0,
-    max: 20,
+  const [cart, handleCart] = React.useState([]);
+
+  const getItemIndex = (arr, item) => {
+    return arr.findIndex((e) => e.descripcion === item);
+  };
+
+  const handleProd = (product, quantity) => {
+    const itemIndex = getItemIndex(cart, product);
+    const prodObj = {
+      descripcion: product,
+      cantidad: quantity,
+    };
+    if (itemIndex === -1) {
+      handleCart((prevArray) => [...prevArray, prodObj]);
+      /* props.callback(cart); */
+      return;
+    }
+    const newArr = [...cart];
+    newArr[itemIndex] = prodObj;
+    handleCart(newArr);
+    /* props.callback(cart); */
+  };
+
+  React.useEffect(() => {
+    props.callback(cart);
   });
 
-  const inc = getIncrementButtonProps();
-  const dec = getDecrementButtonProps();
-  const input = getInputProps({ isReadOnly: true });
-
+  let counter = 0;
   const isReady = props.ready;
 
   return isReady ? (
@@ -32,48 +45,38 @@ const ProdTable = (props) => {
           </Tr>
         </Thead>
         <Tbody>
-          {props.prodList.map((producto) => {
-            let counter = 0;
-            counter++;
-            return (
-              <Tr
-                className={counter % 2 === 0 ? styles.oddRow : styles.evenRow}
-              >
-                <Td>
-                  <HStack maxW={40}>
-                    <Button {...dec}>-</Button>
-                    <Input {...input} />
-                    <Button {...inc}>+</Button>
-                  </HStack>
-                </Td>
-                <Td>{producto.descripcion}</Td>
-                <Td>${producto.precio}</Td>
-              </Tr>
-            );
-          })}
-
-          <Tr>
-            <Td>
-              <HStack maxW={40}>
-                <Button {...dec}>-</Button>
-                <Input {...input} />
-                <Button {...inc}>+</Button>
-              </HStack>
-            </Td>
-            <Td>Jugo de naranja</Td>
-            <Td isNumeric>$111.11</Td>
-          </Tr>
-          <Tr>
-            <Td>
-              <HStack maxW={40}>
-                <Button {...dec}>-</Button>
-                <Input {...input} />
-                <Button {...inc}>+</Button>
-              </HStack>
-            </Td>
-            <Td>Cafe</Td>
-            <Td isNumeric>$222.22</Td>
-          </Tr>
+          {true
+            ? props.prodList.map((producto) => {
+                counter++;
+                return (
+                  <Tr
+                    className={
+                      counter % 2 === 0 ? styles.oddRow : styles.evenRow
+                    }
+                    key={counter}
+                  >
+                    <Td>
+                      {/* <HStack maxW={40}>
+                         <Button onClick={handleIncDec(producto.descripcion, 0)}>
+                          -
+                        </Button> */}
+                      <Input
+                        onChange={(event) => {
+                          handleProd(producto.descripcion, event.target.value);
+                        }}
+                        type="number"
+                      />
+                      {/* <Button onClick={handleIncDec(producto.descripcion, 1)}>
+                          +
+                        </Button>
+                      </HStack>*/}
+                    </Td>
+                    <Td>{producto.descripcion}</Td>
+                    <Td>${producto.precio}</Td>
+                  </Tr>
+                );
+              })
+            : null}
         </Tbody>
       </Table>
     </Box>

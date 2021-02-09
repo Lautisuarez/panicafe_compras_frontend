@@ -1,13 +1,12 @@
 import * as React from "react";
-import { HStack, Heading, Spacer } from "@chakra-ui/react";
+import { Heading } from "@chakra-ui/react";
 
 const HeaderModel = (props) => {
   const t = props.text;
   return (
-    <HStack>
-      <Heading size="lg">{t}</Heading>
-      <Spacer />
-    </HStack>
+    <Heading mt="10%" m="5%" size="lg">
+      {t}
+    </Heading>
   );
 };
 

@@ -1,25 +1,30 @@
-import { SearchIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  IconButton,
-  Input,
-  InputGroup,
-  InputRightElement,
-} from "@chakra-ui/react";
+import { Box, Input, InputGroup } from "@chakra-ui/react";
 import * as React from "react";
-const Searchbar = () => {
+
+const Searchbar = (props) => {
+  const [search, setSearch] = React.useState("");
+
+  const dynamicSearch = () => {
+    props.callback(
+      props.prodList.filter((item) =>
+        item.descripcion.toLowerCase().includes(search.toLowerCase())
+      )
+    );
+  };
+
+  React.useEffect(() => {
+    dynamicSearch();
+  }, [search]);
+
   return (
-    <Box>
+    <Box w="90%">
       <InputGroup>
-        <Input placeholder="Busqueda" />
-        <InputRightElement>
-          <IconButton
-            h="1.7rem"
-            size="sm"
-            aria-label="Buscar Producto"
-            icon={<SearchIcon />}
-          />
-        </InputRightElement>
+        <Input
+          placeholder="Busqueda"
+          onChange={(event) => {
+            setSearch(event.target.value);
+          }}
+        />
       </InputGroup>
     </Box>
   );

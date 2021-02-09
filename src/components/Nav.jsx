@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, PlusSquareIcon } from "@chakra-ui/icons";
-import { VStack, IconButton, Divider, Icon } from "@chakra-ui/react";
+import { HStack, IconButton, Divider, Icon } from "@chakra-ui/react";
 import * as React from "react";
 import { FiShoppingCart } from "react-icons/fi";
 
@@ -9,12 +9,10 @@ const Nav = () => {
   };
 
   return (
-    <VStack bg="#5d6dde" position="absolute" h="100%" w="70px">
+    <HStack h="100%" w="70px">
       <Divider />
-      <IconButton icon={<IconoCarrito />} bg="#5d6dde" w="60px" h="60px" />
-      <IconButton icon={<PlusSquareIcon />} bg="#5d6dde" w="60px" h="60px" />
-      <IconButton icon={<ArrowLeftIcon />} bg="#5d6dde" w="60px" h="60px" />
-    </VStack>
+      <IconButton icon={<IconoCarrito />} w="60px" h="60px" />
+    </HStack>
   );
 };
 

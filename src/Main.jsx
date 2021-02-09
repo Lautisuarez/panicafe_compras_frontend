@@ -1,20 +1,11 @@
 import * as React from "react";
-import {
-  Flex,
-  Container,
-  Divider,
-  HStack,
-  Spacer,
-  CircularProgress,
-} from "@chakra-ui/react";
+import { Flex, Container, CircularProgress } from "@chakra-ui/react";
 import HeaderModel from "./components/HeaderModel";
 import Nav from "./components/Nav";
-import ProdModal from "./components/ProdModal";
-import Searchbar from "./components/Searchbar";
 import TabContainer from "./components/TabContainer";
 
 const Main = () => {
-  const [renderReady, handleRender] = React.useState(false);
+  const [renderReady, handleRender] = React.useState(true);
 
   /* const getProductos = async () => {
     const response = await fetch("http://localhost:3000/getProductos");
@@ -37,21 +28,13 @@ const Main = () => {
   ];
 
   return renderReady ? (
-    <Flex h="100%">
+    <Container>
       <Nav />
       <Container>
-        <Divider h="50px" />
-        <HStack>
-          <HeaderModel text="Productos" />
-          <Spacer />
-          <ProdModal />
-        </HStack>
-        <Divider h="25px" />
-        <Searchbar />
-        <Divider h="25px" />
+        <HeaderModel m="10px" text="Productos" />
         <TabContainer ready={renderReady} prodList={getProductos} />
       </Container>
-    </Flex>
+    </Container>
   ) : (
     <Container centerContent>
       <Flex
