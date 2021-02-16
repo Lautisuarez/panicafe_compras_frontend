@@ -13,16 +13,22 @@ import ProdModal from "./ProdModal";
 import Searchbar from "./Searchbar";
 
 const TabContainer = (props) => {
-  const [newList, handleNewList] = React.useState([]);
-  const [cartList, handleCartList] = React.useState([]);
+  const [searchList, handleSearchList] = React.useState([]);
+  const [cartList, handleCartList] = React.useState([]); // Para enviar?
 
   const searchProdList = (x) => {
-    handleNewList(x);
+    handleSearchList(x);
   };
 
   const cartFinalList = (x) => {
     handleCartList(x);
   };
+
+  /* SEGUIR DESDE ACÁ */
+
+  /*  React.useEffect(() => {
+    searchProdList(props.searchList);
+  }, [cartList]); */
 
   return (
     <VStack mt="15px">
@@ -30,30 +36,19 @@ const TabContainer = (props) => {
       <Tabs>
         <TabList>
           <Tab>Productos</Tab>
-          {/* <Tab>Recientes</Tab> */}
           <Spacer />
           <ProdModal prodList={cartList} />
         </TabList>
 
         <TabPanels>
           <TabPanel>
-            {newList.some((item) => item.id != null) ? (
-              <ProdTable
-                {...props}
-                prodList={newList}
-                callback={cartFinalList}
-              />
-            ) : (
-              <ProdTable {...props} callback={cartFinalList} />
-            )}
+            <ProdTable
+              {...props}
+              searchList={searchList}
+              callback={cartFinalList}
+              /* callback={searchProdList} */
+            />
           </TabPanel>
-          {/* <TabPanel>
-            {newList.some((item) => item.id != null) ? (
-              <ProdTable {...props} prodList={newList} />
-            ) : (
-              <ProdTable {...props} />
-            )}
-          </TabPanel> */}
         </TabPanels>
       </Tabs>
     </VStack>

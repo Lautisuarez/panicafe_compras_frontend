@@ -1,6 +1,8 @@
 import * as React from "react";
 import {
   Button,
+  Icon,
+  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -16,14 +18,24 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
+import { FiShoppingCart } from "react-icons/fi";
 
 const ProdModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const IconoCarrito = () => {
+    return <Icon as={FiShoppingCart} />;
+  };
+
+  let totalPedido = 0;
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   return (
     <>
-      <Button m="5px" onClick={onOpen}>
-        Enviar
-      </Button>
+      <IconButton icon={<IconoCarrito />} m="5px" onClick={onOpen} />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -35,21 +47,36 @@ const ProdModal = (props) => {
               <Table>
                 <Thead>
                   <Tr>
-                    <Th isNumeric>Cantidad</Th>
+                    <Th>Cantidad</Th>
                     <Th>Producto</Th>
-                    <Th isNumeric>Precio</Th>
+                    <Th isNumeric>Precio total</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {props.prodList.map((producto, index) => {
-                    return (
-                      <Tr key={index}>
-                        <Td>{producto.cantidad}</Td>
-                        <Td>{producto.descripcion}</Td>
-                        <Td>${producto.precio}</Td>
-                      </Tr>
-                    );
+                    const totalUnitario = producto.precio * producto.cantidad;
+                    totalPedido += totalUnitario;
+                    if (producto.cantidad !== 0) {
+                      return (
+                        <Tr key={index}>
+                          <Td isNumeric>{producto.cantidad}</Td>
+                          <Td w="100%">
+                            {capitalizeFirstLetter(producto.descripcion)}
+                          </Td>
+                          <Td isNumeric>${totalUnitario}</Td>
+                        </Tr>
+                      );
+                    } else {
+                      return null;
+                    }
                   })}
+                  <Tr>
+                    <Th>Total del pedido</Th>
+                    <Td></Td>
+                    <Td isNumeric fontWeight="semibold">
+                      ${totalPedido}
+                    </Td>
+                  </Tr>
                 </Tbody>
               </Table>
             ) : (

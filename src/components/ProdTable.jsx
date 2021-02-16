@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Box, HStack, Input } from "@chakra-ui/react";
+import { Box, Button, Input } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
-import styles from "../styles/List.css";
 
 const ProdTable = (props) => {
   const [cart, handleCart] = React.useState([]);
@@ -10,71 +9,87 @@ const ProdTable = (props) => {
     return arr.findIndex((e) => e.descripcion === item);
   };
 
-  const handleProd = (product, quantity) => {
+  const handleProd = (product, quantity, precio) => {
     const itemIndex = getItemIndex(cart, product);
     const prodObj = {
       descripcion: product,
-      cantidad: quantity,
+      cantidad: +quantity,
+      precio: precio,
+      show: true,
     };
     if (itemIndex === -1) {
       handleCart((prevArray) => [...prevArray, prodObj]);
-      /* props.callback(cart); */
       return;
     }
     const newArr = [...cart];
     newArr[itemIndex] = prodObj;
     handleCart(newArr);
-    /* props.callback(cart); */
   };
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
+  React.useEffect(() => {
+    handleCart(props.prodList);
+  }, [props.prodList]);
 
   React.useEffect(() => {
     props.callback(cart);
   });
 
-  let counter = 0;
   const isReady = props.ready;
 
   return isReady ? (
     <Box>
-      <Table variant="simple">
+      <Table variant="striped" colorScheme="gray">
         <Thead>
           <Tr>
-            <Th isNumeric>Cantidad</Th>
+            <Th>Cantidad</Th>
+            <Th></Th>
+            <Th>Total de unidades</Th>
             <Th>Producto</Th>
-            <Th isNumeric>Precio</Th>
+            <Th isNumeric>Precio unitario</Th>
           </Tr>
         </Thead>
         <Tbody>
           {true
-            ? props.prodList.map((producto) => {
-                counter++;
-                return (
-                  <Tr
-                    className={
-                      counter % 2 === 0 ? styles.oddRow : styles.evenRow
-                    }
-                    key={counter}
-                  >
+            ? cart.map((producto) => {
+                let inputValue = 0;
+                const handleChange = (e) => {
+                  inputValue = e.target.value;
+                };
+
+                return producto.show ? (
+                  <Tr key={producto.id}>
                     <Td>
-                      {/* <HStack maxW={40}>
-                         <Button onClick={handleIncDec(producto.descripcion, 0)}>
-                          -
-                        </Button> */}
                       <Input
-                        onChange={(event) => {
-                          handleProd(producto.descripcion, event.target.value);
-                        }}
+                        w="200%"
+                        onChange={(event) => handleChange(event)}
                         type="number"
                       />
-                      {/* <Button onClick={handleIncDec(producto.descripcion, 1)}>
-                          +
-                        </Button>
-                      </HStack>*/}
                     </Td>
-                    <Td>{producto.descripcion}</Td>
-                    <Td>${producto.precio}</Td>
+                    <Td>
+                      <Button
+                        colorScheme="whatsapp"
+                        onClick={() => {
+                          handleProd(
+                            producto.descripcion,
+                            inputValue,
+                            producto.precio
+                          );
+                        }}
+                      >
+                        >>
+                      </Button>
+                    </Td>
+                    <Td>{producto.cantidad}</Td>
+                    <Td w="100%">
+                      {capitalizeFirstLetter(producto.descripcion)}
+                    </Td>
+                    <Td isNumeric>${producto.precio}</Td>
                   </Tr>
-                );
+                ) : null;
               })
             : null}
         </Tbody>

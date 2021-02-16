@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Flex, Container, CircularProgress } from "@chakra-ui/react";
 import HeaderModel from "./components/HeaderModel";
-import Nav from "./components/Nav";
 import TabContainer from "./components/TabContainer";
 
 const Main = () => {
@@ -18,18 +17,27 @@ const Main = () => {
     {
       id: 1,
       descripcion: "papas fritas",
+      cantidad: 0,
       precio: 500,
     },
     {
       id: 2,
       descripcion: "chocolate",
+      cantidad: 0,
       precio: 42,
+    },
+    {
+      id: 3,
+      descripcion: "caramelo",
+      cantidad: 0,
+      precio: 5,
     },
   ];
 
+  getProductos.map((prod) => (prod.show = true));
+
   return renderReady ? (
     <Container>
-      <Nav />
       <Container>
         <HeaderModel m="10px" text="Productos" />
         <TabContainer ready={renderReady} prodList={getProductos} />

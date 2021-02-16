@@ -6,8 +6,10 @@ const Searchbar = (props) => {
 
   const dynamicSearch = () => {
     props.callback(
-      props.prodList.filter((item) =>
+      props.prodList.map((item) =>
         item.descripcion.toLowerCase().includes(search.toLowerCase())
+          ? (item.show = true)
+          : (item.show = false)
       )
     );
   };
