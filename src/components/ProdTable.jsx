@@ -1,6 +1,7 @@
 import * as React from "react";
-import { Box, Button, Input } from "@chakra-ui/react";
+import { Box, IconButton, Input } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { ArrowRightIcon } from "@chakra-ui/icons";
 
 const ProdTable = (props) => {
   const [cart, handleCart] = React.useState([]);
@@ -64,14 +65,16 @@ const ProdTable = (props) => {
                   <Tr key={producto.id}>
                     <Td>
                       <Input
-                        w="200%"
+                        placeholder="..."
                         onChange={(event) => handleChange(event)}
                         type="number"
                       />
                     </Td>
                     <Td>
-                      <Button
+                      <IconButton
+                        aria-label="Añadir"
                         colorScheme="whatsapp"
+                        icon={<ArrowRightIcon />}
                         onClick={() => {
                           handleProd(
                             producto.descripcion,
@@ -79,9 +82,7 @@ const ProdTable = (props) => {
                             producto.precio
                           );
                         }}
-                      >
-                        >>
-                      </Button>
+                      />
                     </Td>
                     <Td>{producto.cantidad}</Td>
                     <Td w="100%">

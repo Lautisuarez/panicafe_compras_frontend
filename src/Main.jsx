@@ -1,10 +1,20 @@
 import * as React from "react";
-import { Flex, Container, CircularProgress } from "@chakra-ui/react";
+import {
+  Flex,
+  Container,
+  CircularProgress,
+  Button,
+  HStack,
+  Spacer,
+} from "@chakra-ui/react";
 import HeaderModel from "./components/HeaderModel";
 import TabContainer from "./components/TabContainer";
+import { logout } from "./protected/AuthService";
+import { Redirect } from "react-router-dom";
 
 const Main = () => {
   const [renderReady, handleRender] = React.useState(true);
+  const [redirect, handleRedirect] = React.useState(false);
 
   /* const getProductos = async () => {
     const response = await fetch("http://localhost:3000/getProductos");
@@ -12,6 +22,11 @@ const Main = () => {
     handleRender(true);
     return await response.json();
   }; */
+
+  const logoutHandler = () => {
+    logout();
+    handleRedirect(true);
+  };
 
   const getProductos = [
     {
@@ -36,10 +51,16 @@ const Main = () => {
 
   getProductos.map((prod) => (prod.show = true));
 
-  return renderReady ? (
-    <Container>
+  return redirect ? (
+    <Redirect to="/" />
+  ) : renderReady ? (
+    <Container paddingLeft="150px">
       <Container>
-        <HeaderModel m="10px" text="Productos" />
+        <HStack>
+          <HeaderModel m="10px" text="Productos" />
+          <Spacer />
+          <Button onClick={logoutHandler}>Logout</Button>
+        </HStack>
         <TabContainer ready={renderReady} prodList={getProductos} />
       </Container>
     </Container>

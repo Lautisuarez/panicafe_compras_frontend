@@ -10,3 +10,4 @@ font-family: 'Bitter', serif;
 
 #e3e3e3 Letra
 #1c1c1a Negro Original
+#edf2f6 Blanco

@@ -22,10 +22,12 @@ const Searchbar = (props) => {
     <Box w="90%">
       <InputGroup>
         <Input
+          id="input"
           placeholder="Busqueda"
           onChange={(event) => {
             setSearch(event.target.value);
           }}
+          colorScheme="blue"
         />
       </InputGroup>
     </Box>

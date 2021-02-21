@@ -14,7 +14,7 @@ import Searchbar from "./Searchbar";
 
 const TabContainer = (props) => {
   const [searchList, handleSearchList] = React.useState([]);
-  const [cartList, handleCartList] = React.useState([]); // Para enviar?
+  const [cartList, handleCartList] = React.useState([]);
 
   const searchProdList = (x) => {
     handleSearchList(x);
@@ -23,12 +23,6 @@ const TabContainer = (props) => {
   const cartFinalList = (x) => {
     handleCartList(x);
   };
-
-  /* SEGUIR DESDE ACÁ */
-
-  /*  React.useEffect(() => {
-    searchProdList(props.searchList);
-  }, [cartList]); */
 
   return (
     <VStack mt="15px">
@@ -46,7 +40,6 @@ const TabContainer = (props) => {
               {...props}
               searchList={searchList}
               callback={cartFinalList}
-              /* callback={searchProdList} */
             />
           </TabPanel>
         </TabPanels>
