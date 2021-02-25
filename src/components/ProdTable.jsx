@@ -5,6 +5,16 @@ import { ArrowRightIcon } from "@chakra-ui/icons";
 
 const ProdTable = (props) => {
   const [cart, handleCart] = React.useState([]);
+  const [values, handleValues] = React.useState(async () => {
+    let array = [];
+    const n = await props.prodList.length;
+    for (let index = 0; index < n; index++) {
+      array.push({ value: 0 });
+    }
+    console.log("LARGO", n);
+    console.log("ARRAY", array);
+    return array;
+  });
 
   const getItemIndex = (arr, item) => {
     return arr.findIndex((e) => e.descripcion === item);
@@ -54,19 +64,22 @@ const ProdTable = (props) => {
           </Tr>
         </Thead>
         <Tbody>
-          {true
-            ? cart.map((producto) => {
-                let inputValue = 0;
-                const handleChange = (e) => {
-                  inputValue = e.target.value;
+          {props.ready
+            ? cart.map((producto, index) => {
+                const handleChange = (e, index) => {
+                  let newArr = values;
+                  newArr[index] = { value: e.target.value };
+                  handleValues(newArr);
                 };
 
                 return producto.show ? (
                   <Tr key={producto.id}>
                     <Td>
                       <Input
+                        data-key={index}
+                        defaultValue={0}
                         placeholder="..."
-                        onChange={(event) => handleChange(event)}
+                        onChange={(event) => handleChange(event, index)}
                         type="number"
                       />
                     </Td>
@@ -78,7 +91,7 @@ const ProdTable = (props) => {
                         onClick={() => {
                           handleProd(
                             producto.descripcion,
-                            inputValue,
+                            values[index].value,
                             producto.precio
                           );
                         }}
