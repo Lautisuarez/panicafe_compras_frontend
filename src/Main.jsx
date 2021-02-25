@@ -13,43 +13,29 @@ import { logout } from "./protected/AuthService";
 import { Redirect } from "react-router-dom";
 
 const Main = () => {
-  const [renderReady, handleRender] = React.useState(true);
+  const [renderReady, handleRender] = React.useState(false);
   const [redirect, handleRedirect] = React.useState(false);
+  const [prodList, handleProdList] = React.useState([]);
 
-  /* const getProductos = async () => {
-    const response = await fetch("http://localhost:3000/getProductos");
+  const getProductos = async () => {
+    if (prodList !== []) {
+      const response = await fetch("http://107.180.107.29:3001/productos");
 
-    handleRender(true);
-    return await response.json();
-  }; */
+      handleRender(true);
+      const res = await response.json();
+      res.map((prod) => (prod.show = true));
+      handleProdList(res);
+    }
+  };
 
   const logoutHandler = () => {
     logout();
     handleRedirect(true);
   };
 
-  const getProductos = [
-    {
-      id: 1,
-      descripcion: "papas fritas",
-      cantidad: 0,
-      precio: 500,
-    },
-    {
-      id: 2,
-      descripcion: "chocolate",
-      cantidad: 0,
-      precio: 42,
-    },
-    {
-      id: 3,
-      descripcion: "caramelo",
-      cantidad: 0,
-      precio: 5,
-    },
-  ];
-
-  getProductos.map((prod) => (prod.show = true));
+  React.useEffect(() => {
+    getProductos();
+  }, []);
 
   return redirect ? (
     <Redirect to="/" />
@@ -61,7 +47,7 @@ const Main = () => {
           <Spacer />
           <Button onClick={logoutHandler}>Logout</Button>
         </HStack>
-        <TabContainer ready={renderReady} prodList={getProductos} />
+        <TabContainer ready={renderReady} prodList={prodList} />
       </Container>
     </Container>
   ) : (

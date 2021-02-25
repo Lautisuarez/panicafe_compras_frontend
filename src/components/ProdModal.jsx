@@ -35,7 +35,8 @@ const ProdModal = (props) => {
   };
 
   const handleAPICall = async (bd) => {
-    const response = await fetch("http://example.com/", {
+    // Cambiar link
+    await fetch("http://localhost:3001/pedidos", {
       method: "POST",
       body: bd,
       headers: {
@@ -44,8 +45,8 @@ const ProdModal = (props) => {
     });
     // Manejo de Modal
     handleSent(true);
-    const myJson = await response.json();
     // Espacio para manejar response
+    // const myJson = await response.json();
   };
 
   const sendPedido = async () => {
@@ -86,7 +87,7 @@ const ProdModal = (props) => {
           <ModalCloseButton />
 
           {sent ? (
-            <ModalBody>El pedido fue enviado.</ModalBody>
+            <ModalBody>El pedido fue enviado con exito.</ModalBody>
           ) : (
             <ModalBody>
               {props.prodList.length > 0 ? (
@@ -101,8 +102,14 @@ const ProdModal = (props) => {
                   <Tbody>
                     {props.prodList.map((producto, index) => {
                       const totalUnitario = producto.precio * producto.cantidad;
-                      totalPedido += totalUnitario;
-                      if (producto.cantidad !== 0) {
+                      if (!Number.isNaN(totalUnitario)) {
+                        totalPedido += totalUnitario;
+                      }
+                      console.log(totalPedido);
+                      if (
+                        producto.cantidad !== 0 &&
+                        !Number.isNaN(totalUnitario)
+                      ) {
                         return (
                           <Tr key={index}>
                             <Td isNumeric>{producto.cantidad}</Td>
@@ -120,7 +127,7 @@ const ProdModal = (props) => {
                       <Th>Total del pedido</Th>
                       <Td></Td>
                       <Td isNumeric fontWeight="semibold">
-                        ${totalPedido}
+                        {totalPedido > 0 ? `$${totalPedido}` : "$0"}
                       </Td>
                     </Tr>
                   </Tbody>
