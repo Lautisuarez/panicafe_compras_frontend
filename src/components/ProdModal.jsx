@@ -36,20 +36,17 @@ const ProdModal = (props) => {
 
   const handleAPICall = async (bd) => {
     // Cambiar link
-    console.log("body",bd)
     const response = await fetch("http://107.180.107.29:3001/pedidos", {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+localStorage.getItem('token')
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify(bd)
+      body: JSON.stringify(bd),
     });
     // Manejo de Modal
-    console.log(response)
-    if (response.status !== 201 )
-    {
-      alert("error")
+    if (response.status !== 201) {
+      alert("error");
     }
     handleSent(true);
     // Espacio para manejar response
@@ -116,7 +113,6 @@ const ProdModal = (props) => {
                       if (!Number.isNaN(totalUnitario)) {
                         totalPedido += totalUnitario;
                       }
-                      console.log(totalPedido);
                       if (
                         producto.cantidad !== 0 &&
                         !Number.isNaN(totalUnitario)
@@ -150,9 +146,11 @@ const ProdModal = (props) => {
           )}
 
           <ModalFooter>
+            sent ? (null):(
             <Button colorScheme="blue" mr={3} onClick={sendPedido}>
               Confirmar pedido
             </Button>
+            )
             <Button variant="ghost" onClick={onClose}>
               Cerrar
             </Button>

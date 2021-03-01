@@ -11,8 +11,6 @@ const ProdTable = (props) => {
     for (let index = 0; index < n; index++) {
       array.push({ value: 0 });
     }
-    console.log("LARGO", n);
-    console.log("ARRAY", array);
     return array;
   });
 
@@ -20,7 +18,7 @@ const ProdTable = (props) => {
     return arr.findIndex((e) => e.descripcion === item);
   };
 
-  const handleProd = (product, quantity, precio,id) => {
+  const handleProd = (product, quantity, precio, id) => {
     const itemIndex = getItemIndex(cart, product);
     const prodObj = {
       idProducto: id,

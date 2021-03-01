@@ -1,8 +1,6 @@
 import { Button, Center, Image, Input, Spacer, VStack } from "@chakra-ui/react";
 import * as React from "react";
 import PasswordInput from "./components/PasswordInput";
-import HeaderModel from "./components/HeaderModel";
-import { login } from "./protected/AuthService";
 import { Redirect } from "react-router-dom";
 
 const Login = () => {
@@ -16,31 +14,28 @@ const Login = () => {
   };
   const login = async () => {
     const response = await fetch("http://107.180.107.29:3001/login", {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({usuario: user, pass: password})
+      body: JSON.stringify({ usuario: user, pass: password }),
     });
 
     if (response.status === 200) {
-        const data = await response.json()
-        const token = data.token
-        console.log("TOKEN", token)
-        //guardar token en localstorage (sessionstorage se cierra siempre, re molesto)
-        localStorage.setItem('token', token)
-        return handleResponse(true)
+      const data = await response.json();
+      const token = data.token;
+      //guardar token en localstorage (sessionstorage se cierra siempre, re molesto)
+      localStorage.setItem("token", token);
+      return handleResponse(true);
     }
     //Poner los else if que hay (usuario no existe, o contraseña incorrecta, comprobalos en el postman)
-    else if ( response.status === 404) {
-      return alert("Error usuario inexistente")
-    } 
-    else if ( response.status === 401) {
-      return alert("Contraseña Incorrecta")
-    } 
-  }
-
+    else if (response.status === 404) {
+      return alert("Error usuario inexistente");
+    } else if (response.status === 401) {
+      return alert("Contraseña Incorrecta");
+    }
+  };
 
   return response ? (
     <Redirect to="/main" />
@@ -51,17 +46,14 @@ const Login = () => {
         <Image src="https://imgur.com/20VHT84.png" w="50%" />
 
         <VStack>
-          {/* <HeaderModel text="Identifiquese" /> */}
           <Spacer />
-          <Input placeholder="Ingrese su usuario" 
-          onChange=
-          {
-            (event) => {
+          <Input
+            placeholder="Ingrese su usuario"
+            onChange={(event) => {
               setUser(event.target.value);
-            }
-          }
+            }}
           />
-          <PasswordInput 
+          <PasswordInput
             onChange={(event) => {
               setPassword(event.target.value);
             }}
