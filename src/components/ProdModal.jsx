@@ -76,7 +76,11 @@ const ProdModal = (props) => {
 
     // Enviando pedido
     try {
-      handleAPICall(pedido);
+      const prodFiltrado = pedido.productos.filter(
+        (item) => item.hasOwnProperty("cantidad") && item.cantidad !== 0
+      );
+      const pedidoFiltrado = { ...pedido, productos: prodFiltrado };
+      handleAPICall(pedidoFiltrado);
     } catch (error) {
       alert(`Parece que ha habido un error. ${error}`);
     }
