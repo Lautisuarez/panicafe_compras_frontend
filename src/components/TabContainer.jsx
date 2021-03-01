@@ -31,7 +31,7 @@ const TabContainer = (props) => {
         <TabList>
           <Tab>Productos</Tab>
           <Spacer />
-          <ProdModal prodList={cartList} />
+          <ProdModal prodList={cartList} logout={props.logout} />
         </TabList>
 
         <TabPanels>

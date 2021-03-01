@@ -93,7 +93,6 @@ const ProdModal = (props) => {
         <ModalContent>
           <ModalHeader>Pedido</ModalHeader>
           <ModalCloseButton />
-
           {sent ? (
             <ModalBody>El pedido fue enviado con exito.</ModalBody>
           ) : (
@@ -144,17 +143,22 @@ const ProdModal = (props) => {
               )}
             </ModalBody>
           )}
-
-          <ModalFooter>
-            sent ? (null):(
-            <Button colorScheme="blue" mr={3} onClick={sendPedido}>
-              Confirmar pedido
-            </Button>
-            )
-            <Button variant="ghost" onClick={onClose}>
+          (
+          {sent ? (
+            <Button variant="ghost" onClick={props.logout}>
               Cerrar
             </Button>
-          </ModalFooter>
+          ) : (
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={sendPedido}>
+                Confirmar pedido
+              </Button>
+              <Button variant="ghost" onClick={onClose}>
+                Cerrar
+              </Button>
+            </ModalFooter>
+          )}
+          )
         </ModalContent>
       </Modal>
     </>
