@@ -20,9 +20,10 @@ const ProdTable = (props) => {
     return arr.findIndex((e) => e.descripcion === item);
   };
 
-  const handleProd = (product, quantity, precio) => {
+  const handleProd = (product, quantity, precio,id) => {
     const itemIndex = getItemIndex(cart, product);
     const prodObj = {
+      idProducto: id,
       descripcion: product,
       cantidad: +quantity,
       precio: precio,
@@ -92,7 +93,8 @@ const ProdTable = (props) => {
                           handleProd(
                             producto.descripcion,
                             values[index].value,
-                            producto.precio
+                            producto.precio,
+                            producto.id
                           );
                         }}
                       />

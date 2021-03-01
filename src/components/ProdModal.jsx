@@ -39,13 +39,14 @@ const ProdModal = (props) => {
     console.log("body",bd)
     const response = await fetch("http://107.180.107.29:3001/pedidos", {
       method: "POST",
-      body: bd,
-      headers:{
+      headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer '+localStorage.getItem('token')
       },
+      body: JSON.stringify(bd)
     });
     // Manejo de Modal
+    console.log(response)
     if (response.status !== 201 )
     {
       alert("error")
