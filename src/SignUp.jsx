@@ -5,17 +5,17 @@ import HeaderModel from "./components/HeaderModel";
 import { login } from "./protected/AuthService";
 import { Redirect } from "react-router-dom";
 
-const Login = () => {
+const Signup = () => {
   const [response, handleResponse] = React.useState(false);
   const [user, setUser] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   const handleClick = () => {
-    login();
+    signUp();
     handleResponse(false);
   };
-  const login = async () => {
-    const response = await fetch("http://107.180.107.29:3001/login", {
+  const signUp = async () => {
+    const response = await fetch("http://107.180.107.29:3001/adduser", {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -27,9 +27,7 @@ const Login = () => {
     if (response.status === 200) {
         const data = await response.json()
         const token = data.token
-        console.log("TOKEN", token)
         //guardar token en localstorage (sessionstorage se cierra siempre, re molesto)
-        localStorage.setItem('token', token)
         return handleResponse(true)
     }
     //Poner los else if que hay (usuario no existe, o contraseña incorrecta, comprobalos en el postman)
@@ -53,7 +51,7 @@ const Login = () => {
         <VStack>
           {/* <HeaderModel text="Identifiquese" /> */}
           <Spacer />
-          <Input placeholder="Ingrese su usuario" 
+          <Input placeholder="Ingrese el nuevo usuario" 
           onChange=
           {
             (event) => {
@@ -65,9 +63,9 @@ const Login = () => {
             onChange={(event) => {
               setPassword(event.target.value);
             }}
-            placeholder={"Ingrese su contraseña"}
+            placeholder="Ingrese su contraseña"
           />
-          <Button onClick={handleClick}>Enviar</Button>
+          <Button onClick={handleClick}>Crear Usuario</Button>
         </VStack>
       </VStack>
       <Spacer />

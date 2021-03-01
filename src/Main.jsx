@@ -17,9 +17,15 @@ const Main = () => {
   const [redirect, handleRedirect] = React.useState(false);
   const [prodList, handleProdList] = React.useState([]);
 
+
   const getProductos = async () => {
     if (prodList !== []) {
-      const response = await fetch("http://107.180.107.29:3001/productos");
+      const response = await fetch("http://107.180.107.29:3001/productos",{
+        headers: new Headers({
+          'Authorization': 'Bearer'+localStorage.getItem('token'), 
+          'Content-Type': 'application/json'
+        }),
+      });
 
       handleRender(true);
       const res = await response.json();

@@ -36,14 +36,20 @@ const ProdModal = (props) => {
 
   const handleAPICall = async (bd) => {
     // Cambiar link
-    await fetch("http://localhost:3001/pedidos", {
+    console.log("body",bd)
+    const response = await fetch("http://107.180.107.29:3001/pedidos", {
       method: "POST",
       body: bd,
-      headers: {
-        "Content-Type": "application/json",
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+localStorage.getItem('token')
       },
     });
     // Manejo de Modal
+    if (response.status !== 201 )
+    {
+      alert("error")
+    }
     handleSent(true);
     // Espacio para manejar response
     // const myJson = await response.json();
@@ -63,7 +69,7 @@ const ProdModal = (props) => {
     // Armando objeto pedido
     const pedido = {
       precioTotal: totalPedido,
-      idCliente: "idEjemplo",
+      idCliente: 2,
       fecha: date,
       productos: props.prodList,
     };
