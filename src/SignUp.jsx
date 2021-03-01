@@ -15,7 +15,7 @@ const Signup = () => {
     handleResponse(false);
   };
   const signUp = async () => {
-    const response = await fetch("http://107.180.107.29:3001/adduser", {
+    const response = await fetch("http://localhost:3001/adduser", {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

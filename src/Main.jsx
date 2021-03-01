@@ -20,9 +20,9 @@ const Main = () => {
 
   const getProductos = async () => {
     if (prodList !== []) {
-      const response = await fetch("http://107.180.107.29:3001/productos",{
+      const response = await fetch("http://localhost:3001/productos",{
         headers: new Headers({
-          'Authorization': 'Bearer'+localStorage.getItem('token'), 
+          'Authorization': 'Bearer '+localStorage.getItem('token'), 
           'Content-Type': 'application/json'
         }),
       });
