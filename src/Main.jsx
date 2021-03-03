@@ -17,20 +17,23 @@ const Main = () => {
   const [redirect, handleRedirect] = React.useState(false);
   const [prodList, handleProdList] = React.useState([]);
 
-
   const getProductos = async () => {
     if (prodList !== []) {
-      const response = await fetch("http://localhost:3001/productos",{
-        headers: new Headers({
-          'Authorization': 'Bearer '+localStorage.getItem('token'), 
-          'Content-Type': 'application/json'
-        }),
-      });
+      try {
+        const response = await fetch("http://107.180.107.29:3001/productos", {
+          headers: new Headers({
+            Authorization: "Bearer " + localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          }),
+        });
 
-      handleRender(true);
-      const res = await response.json();
-      res.map((prod) => (prod.show = true));
-      handleProdList(res);
+        await handleRender(true);
+        const res = await response.json();
+        res.map((prod) => (prod.show = true));
+        handleProdList(res);
+      } catch (error) {
+        alert(error);
+      }
     }
   };
 
@@ -53,7 +56,11 @@ const Main = () => {
           <Spacer />
           <Button onClick={logoutHandler}>Logout</Button>
         </HStack>
-        <TabContainer ready={renderReady} prodList={prodList} />
+        <TabContainer
+          logout={logoutHandler}
+          ready={renderReady}
+          prodList={prodList}
+        />
       </Container>
     </Container>
   ) : (
