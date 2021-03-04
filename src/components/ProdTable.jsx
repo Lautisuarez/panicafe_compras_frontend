@@ -8,17 +8,15 @@ const ProdTable = (props) => {
   const [values, handleValues] = React.useState(async () => {
     let array = [];
     const n = await props.prodList.length;
-    console.log(n);
     for (let index = 0; index < n; index++) {
       array.push({ value: 0 });
     }
     return array;
   });
 
-  const [addedValues, handleAddedValues] = React.useState(async () => {
+  const [addedValues, handleAddedValues] = React.useState(() => {
     let array = [];
-    const n = await props.prodList.length;
-    console.log(n);
+    const n = props.prodList.length;
     for (let index = 0; index < n; index++) {
       array.push({ added: false });
     }
@@ -37,31 +35,41 @@ const ProdTable = (props) => {
         descripcion: product,
         precio: precio,
         show: true,
-        added: false,
       };
-
+      addedValuesHandler(itemIndex, 0);
       const newArr = [...cart];
       newArr[itemIndex] = prodObj;
-      console.log(newArr);
       handleCart(newArr);
+    } else {
+      const itemIndex = getItemIndex(cart, product);
+      const prodObj = {
+        id: id,
+        descripcion: product,
+        cantidad: +quantity,
+        precio: precio,
+        show: true,
+      };
+      if (itemIndex === -1) {
+        handleCart((prevArray) => [...prevArray, prodObj]);
+        return;
+      }
+      const newArr = [...cart];
+      newArr[itemIndex] = prodObj;
+      handleCart(newArr);
+      addedValuesHandler(itemIndex, 1);
     }
+  };
 
-    const itemIndex = getItemIndex(cart, product);
-    const prodObj = {
-      id: id,
-      descripcion: product,
-      cantidad: +quantity,
-      precio: precio,
-      show: true,
-      added: true,
-    };
-    if (itemIndex === -1) {
-      handleCart((prevArray) => [...prevArray, prodObj]);
-      return;
+  const addedValuesHandler = (index, condition) => {
+    if (condition === 1) {
+      let newArr = addedValues;
+      newArr[index] = { added: true };
+      handleAddedValues(newArr);
+    } else if (condition === 0) {
+      let newArr = addedValues;
+      newArr[index] = { added: false };
+      handleAddedValues(newArr);
     }
-    const newArr = [...cart];
-    newArr[itemIndex] = prodObj;
-    handleCart(newArr);
   };
 
   const capitalizeFirstLetter = (string) => {
@@ -76,11 +84,9 @@ const ProdTable = (props) => {
     props.callback(cart);
   });
 
-  const isReady = props.ready;
-
-  return isReady ? (
+  return props.ready ? (
     <Box>
-      <Table variant="striped" colorScheme="gray">
+      <Table variant="simple">
         <Thead>
           <Tr>
             <Th>Cantidad</Th>
@@ -99,17 +105,10 @@ const ProdTable = (props) => {
                   handleValues(newArr);
                 };
 
-                const addedValuesHandler = (index) => {
-                  let newArr = addedValues;
-                  newArr[index] = { added: true };
-                  console.log(newArr);
-                  handleAddedValues(newArr);
-                };
-
                 return producto.show ? (
                   <Tr
                     key={producto.id}
-                    bgColor={addedValues[index].added ? "red" : "white"}
+                    bgColor={addedValues[index].added ? "gainsboro" : "white"}
                   >
                     <Td>
                       <Input
@@ -128,7 +127,6 @@ const ProdTable = (props) => {
                             colorScheme="red"
                             icon={<CloseIcon />}
                             onClick={() => {
-                              addedValuesHandler(index);
                               handleProd(
                                 producto.descripcion,
                                 producto.precio,

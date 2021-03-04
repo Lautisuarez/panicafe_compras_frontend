@@ -19,21 +19,19 @@ const Main = () => {
 
   const getProductos = async () => {
     if (prodList !== []) {
-      try {
-        const response = await fetch("http://107.180.107.29:3001/productos", {
-          headers: new Headers({
-            Authorization: "Bearer " + localStorage.getItem("token"),
-            "Content-Type": "application/json",
-          }),
-        });
-
-        await handleRender(true);
-        const res = await response.json();
-        res.map((prod) => (prod.show = true));
-        handleProdList(res);
-      } catch (error) {
-        alert(error);
-      }
+      fetch("http://107.180.107.29:3001/productos", {
+        headers: new Headers({
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        }),
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          res.map((prod) => (prod.show = true));
+          handleProdList(res);
+        })
+        .then(() => handleRender(true))
+        .catch((error) => console.error(error));
     }
   };
 
@@ -54,7 +52,7 @@ const Main = () => {
         <HStack>
           <HeaderModel m="10px" text="Productos" />
           <Spacer />
-          <Button onClick={logoutHandler}>Logout</Button>
+          <Button onClick={logoutHandler}>Desconectarse</Button>
         </HStack>
         <TabContainer
           logout={logoutHandler}
@@ -74,7 +72,12 @@ const Main = () => {
         px={8}
         mb={16}
       >
-        <CircularProgress isIndeterminate color="gray.300" size="100%" />
+        <CircularProgress
+          isIndeterminate
+          color="#f7d4ab"
+          size="50%"
+          thickness="4px"
+        />
       </Flex>
     </Container>
   );

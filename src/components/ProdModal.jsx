@@ -36,7 +36,7 @@ const ProdModal = (props) => {
 
   const handleAPICall = async (bd) => {
     // Cambiar link
-    const response = await fetch("http://localhost:3001/pedidos", {
+    const response = await fetch("http://107.180.107.29:3001/pedidos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -88,11 +88,11 @@ const ProdModal = (props) => {
     <>
       <IconButton icon={<IconoCarrito />} m="5px" onClick={onOpen} />
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Pedido</ModalHeader>
-          <ModalCloseButton />
+
           {sent ? (
             <ModalBody>El pedido fue enviado con exito.</ModalBody>
           ) : (
@@ -143,11 +143,13 @@ const ProdModal = (props) => {
               )}
             </ModalBody>
           )}
-          (
+
           {sent ? (
-            <Button variant="ghost" onClick={props.logout}>
-              Cerrar
-            </Button>
+            <ModalFooter>
+              <Button variant="ghost" onClick={props.logout}>
+                Cerrar
+              </Button>
+            </ModalFooter>
           ) : (
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={sendPedido}>
@@ -158,7 +160,6 @@ const ProdModal = (props) => {
               </Button>
             </ModalFooter>
           )}
-          )
         </ModalContent>
       </Modal>
     </>
