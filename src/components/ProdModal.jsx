@@ -36,7 +36,7 @@ const ProdModal = (props) => {
 
   const handleAPICall = async (bd) => {
     // Cambiar link
-    const response = await fetch("http://localhost:3001/pedidos", {
+    const response = await fetch("http://107.180.107.29:3001/pedidos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
