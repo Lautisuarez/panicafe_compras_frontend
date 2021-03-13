@@ -2,12 +2,46 @@ import { Button } from "@chakra-ui/button";
 import { Box, Container, HStack, Spacer, VStack } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import * as React from "react";
+import { useEffect } from "react";
 import { Redirect } from "react-router";
 import { logout } from "../protected/AuthService";
-import { HeaderModel } from "./HeaderModel";
+import  HeaderModel  from "./HeaderModel";
+import CustomModal from './CustomModal'
 
 const ABM = (props) => {
   const [redirect, handleRedirect] = React.useState(false);
+  const [users, setUsers] = React.useState([])
+  const getUsers = async () => {
+    const response = await fetch("http://localhost:3001/getUsers", {
+      method: "GET",
+      headers: new Headers({
+        Authorization: "Bearer " + localStorage.getItem("token"),
+        "Content-Type": "application/json",
+      }),
+    });
+    const data = await response.json();
+    console.log(data)
+    setUsers(data) 
+  }
+  const deleteUser = async (usuario) => {
+    const response = await fetch("http://localhost:3001/deleteUser", {
+      method: "DELETE",
+      headers: new Headers({
+        Authorization: "Bearer " + localStorage.getItem("token"),
+        "Content-Type": "application/json",
+      }),
+      body:JSON.stringify({
+        usuario
+      })
+    });
+    const data = await response.json();
+    console.log(data)
+    getUsers()
+  }
+
+  React.useEffect(() => {
+    getUsers();
+  }, []);
   const logoutHandler = () => {
     logout();
     handleRedirect(true);
@@ -24,7 +58,9 @@ const ABM = (props) => {
             <Button onClick={logoutHandler}>Desconectarse</Button>
           </HStack>
           <VStack>
-            <Button variant="whatsapp">Cambiar contraseña</Button>
+            <CustomModal getUsers={getUsers}/>
+
+            {/* <Button variant="whatsapp">Cambiar contraseña</Button> */}
             <Spacer />
             <Table>
               <Thead>
@@ -34,13 +70,19 @@ const ABM = (props) => {
                 </Tr>
               </Thead>
               <Tbody>
-                {props.userList.map((user) => {
+                { users.length > 0 ?
+                  
+                users.map((user) => {
                   return (
                     <Tr>
-                      <Td>{<Button variant="red">Eliminar usuario</Button>}</Td>
+                      <Td>{user}</Td>
+                      <Td><Button variant="red" onClick={() => deleteUser(user)}>Eliminar usuario</Button></Td>
                     </Tr>
                   );
-                })}
+                })
+                :
+                null
+              }
               </Tbody>
             </Table>
           </VStack>

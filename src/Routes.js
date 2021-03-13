@@ -1,12 +1,13 @@
 import React from "react";
 import { Button, ChakraProvider, Flex, VStack } from "@chakra-ui/react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { MdHome } from "react-icons/md";
+import { MdAccountBox, MdHome } from "react-icons/md";
 import Main from "./Main";
 import Login from "./Login";
 import { extendTheme } from "@chakra-ui/react";
 import Fonts from "./Fonts";
 import ProtectedRoute from "./protected/ProtectedRoute";
+import ABM from "./components/ABM";
 
 const theme = extendTheme({
   fonts: {
@@ -60,10 +61,40 @@ const Routes = () => {
                   <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
                     <Link to="/main">Inicio</Link>
                   </Button>
+                  <Button bgColor="#ebc699" leftIcon={<MdAccountBox />} m="10px">
+                    <Link to="/abm">ABM</Link>
+                  </Button>
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />
                   <Main />
+                </ChakraProvider>
+              </Flex>
+            }
+          />
+          <ProtectedRoute
+            path="/abm"
+            exact
+            children={
+              <Flex>
+                <VStack
+                  bgColor="#f7d4ab"
+                  z-index="1"
+                  position="fixed"
+                  top="0"
+                  left="0"
+                  h="100%"
+                >
+                  <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
+                    <Link to="/main">Inicio</Link>
+                  </Button>
+                  <Button bgColor="#ebc699" leftIcon={<MdAccountBox />} m="10px">
+                    <Link to="/main">ABM</Link>
+                  </Button>
+                </VStack>
+                <ChakraProvider theme={theme}>
+                  <Fonts />
+                  <ABM />
                 </ChakraProvider>
               </Flex>
             }
@@ -83,6 +114,9 @@ const Routes = () => {
                 >
                   <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
                     <Link to="/main">Inicio</Link>
+                  </Button>
+                  <Button bgColor="#ebc699" leftIcon={<MdAccountBox />} m="10px">
+                    <Link to="/main">ABM</Link>
                   </Button>
                 </VStack>
                 <ChakraProvider theme={theme}>
