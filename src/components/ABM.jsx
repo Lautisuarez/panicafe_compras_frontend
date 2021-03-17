@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/button";
+import { Button, ButtonGroup } from "@chakra-ui/button";
 import { Container, HStack, Spacer, VStack } from "@chakra-ui/layout";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import * as React from "react";
@@ -49,29 +49,31 @@ const ABM = (props) => {
     <Redirect to="/" />
   ) : (
     <Container paddingLeft="150px">
-      <Container>
-        <HStack>
-          <HeaderModel text={"Modulo de Usuarios"} />
-          <Spacer />
-          <Button onClick={logoutHandler}>Desconectarse</Button>
-        </HStack>
-        <VStack>
-          <AbmModal getUsers={getUsers} />
-          <Spacer />
-          <Table>
-            <Thead>
-              <Tr>
-                <Th>Usuario</Th>
-                <Th>Opciones</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {users.length > 0
-                ? users.map((user) => {
-                    return (
-                      <Tr>
-                        <Td>{user}</Td>
-                        <Td>
+      <HStack>
+        <HeaderModel text={"Modulo de Usuarios"} />
+        <Spacer />
+        <Button p="20px" onClick={logoutHandler}>
+          Desconectarse
+        </Button>
+      </HStack>
+      <VStack>
+        <AbmModal getUsers={getUsers} />
+        <Spacer />
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Usuario</Th>
+              <Th>Opciones</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {users.length > 0
+              ? users.map((user) => {
+                  return (
+                    <Tr>
+                      <Td>{user}</Td>
+                      <Td>
+                        <ButtonGroup>
                           <Button
                             variant="red"
                             onClick={() => deleteUser(user)}
@@ -79,15 +81,15 @@ const ABM = (props) => {
                             Eliminar usuario
                           </Button>
                           {/* <Button variant="whatsapp">Cambiar contraseña</Button> */}
-                        </Td>
-                      </Tr>
-                    );
-                  })
-                : null}
-            </Tbody>
-          </Table>
-        </VStack>
-      </Container>
+                        </ButtonGroup>
+                      </Td>
+                    </Tr>
+                  );
+                })
+              : null}
+          </Tbody>
+        </Table>
+      </VStack>
     </Container>
   );
 };

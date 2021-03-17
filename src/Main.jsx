@@ -52,7 +52,9 @@ const Main = () => {
         <HStack>
           <HeaderModel m="10px" text="Productos" />
           <Spacer />
-          <Button onClick={logoutHandler}>Desconectarse</Button>
+          <Button p="20px" onClick={logoutHandler}>
+            Desconectarse
+          </Button>
         </HStack>
         <TabContainer
           logout={logoutHandler}
