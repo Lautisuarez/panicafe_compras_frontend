@@ -12,6 +12,13 @@ const Login = () => {
     login();
     handleResponse(false);
   };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleClick();
+    }
+  };
+
   const login = async () => {
     const response = await fetch("http://107.180.107.29:3001/login", {
       method: "POST",
@@ -59,7 +66,9 @@ const Login = () => {
             }}
             placeholder={"Ingrese su contraseña"}
           />
-          <Button onClick={handleClick}>Enviar</Button>
+          <Button onClick={handleClick} onKeyPress={handleKeyPress}>
+            Enviar
+          </Button>
         </VStack>
       </VStack>
       <Spacer />

@@ -14,13 +14,20 @@ import {
   Input,
   Spacer,
   VStack,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import PasswordInput from "./PasswordInput";
 
 import { FiPlus } from "react-icons/fi";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 const AbmModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [infoAddUser, setInfoAddUser] = React.useState([]);
+  const [id, setId] = React.useState(0);
   const [user, setUser] = React.useState("");
   const [userCreated, setUserCreated] = React.useState(false);
   const [password, setPassword] = React.useState("");
@@ -30,6 +37,17 @@ const AbmModal = (props) => {
   const IconoCarrito = () => {
     return <Icon as={FiPlus} />;
   };
+  const getInfoAddUser = async () => {
+    const response = await fetch("http://107.180.107.29:3001/getInfoAddUser", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+    setInfoAddUser(response);
+  };
+
   const handleAPICall = async (usuario, password, isAdmin, nombre, email) => {
     // Cambiar link
     const response = await fetch("http://107.180.107.29:3001/addUser", {
@@ -38,9 +56,8 @@ const AbmModal = (props) => {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify({ isAdmin, usuario, password, nombre, email }),
+      body: JSON.stringify({ id, isAdmin, usuario, password, nombre, email }),
     });
-
     if (response.status === 201) {
       setUserCreated(true);
     }
@@ -54,13 +71,20 @@ const AbmModal = (props) => {
   };
   return (
     <>
-      <IconButton icon={<IconoCarrito />} m="5px" onClick={onOpen} />
+      <IconButton
+        icon={<IconoCarrito />}
+        m="5px"
+        onClick={() => {
+          getInfoAddUser();
+          onOpen();
+        }}
+      />
       <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
         <ModalOverlay />
 
         {!userCreated ? (
           <ModalContent>
-            <ModalHeader>Pedido</ModalHeader>
+            <ModalHeader>Añadir usuario</ModalHeader>
 
             <ModalBody>
               <VStack>
@@ -90,20 +114,45 @@ const AbmModal = (props) => {
                   }}
                   placeholder={"Contraseña"}
                 />
+                <Menu>
+                  {({ isOpen }) => (
+                    <>
+                      <MenuButton
+                        isActive={isOpen}
+                        as={Button}
+                        rightIcon={<ChevronDownIcon />}
+                        isFullWidth="true"
+                      >
+                        {isOpen ? "Cerrar" : "Sucursal"}
+                      </MenuButton>
+                      <MenuList>
+                        {/* Mapeo de sucursal */}
+                        {infoAddUser.map((datos) => {
+                          return (
+                            <MenuItem onClick={setId(datos.id)}>
+                              {datos.nombre}
+                            </MenuItem>
+                          );
+                        })}
+                      </MenuList>
+                    </>
+                  )}
+                </Menu>
                 <Checkbox onChange={() => setIsAdmin(1)}>
                   Administrador
                 </Checkbox>
-                <Button
-                  onClick={() =>
-                    handleAPICall(user, password, isAdmin, nombre, email)
-                  }
-                >
-                  Enviar
-                </Button>
               </VStack>
             </ModalBody>
 
             <ModalFooter>
+              <Button
+                colorScheme="whatsapp"
+                onClick={() =>
+                  handleAPICall(user, password, isAdmin, nombre, email)
+                }
+              >
+                Enviar
+              </Button>
               <Button variant="ghost" onClick={onClose}>
                 Cerrar
               </Button>
