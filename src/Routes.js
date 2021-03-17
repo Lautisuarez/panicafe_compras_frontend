@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ChakraProvider, Flex, VStack } from "@chakra-ui/react";
+import { Button, Center, ChakraProvider, Flex, VStack } from "@chakra-ui/react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { MdAccountBox, MdHome } from "react-icons/md";
 import Main from "./Main";
@@ -31,6 +31,7 @@ const Routes = () => {
       <Switch>
         <Route path="/" exact />
         <Route path="/main" exact />
+        <Route path="/abm" exact />
       </Switch>
 
       <div style={{ flex: 1, padding: "10px" }}>
@@ -58,12 +59,27 @@ const Routes = () => {
                   left="0"
                   h="100%"
                 >
-                  <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
-                    <Link to="/main">Inicio</Link>
-                  </Button>
-                  <Button bgColor="#ebc699" leftIcon={<MdAccountBox />} m="10px">
-                    <Link to="/abm">ABM</Link>
-                  </Button>
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdHome />}
+                      m="20px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/main">Inicio</Link>
+                    </Button>
+                  </Center>
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdAccountBox />}
+                      isFullWidth="true"
+                      m="10px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/abm">ABM</Link>
+                    </Button>
+                  </Center>
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />
@@ -85,12 +101,27 @@ const Routes = () => {
                   left="0"
                   h="100%"
                 >
-                  <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
-                    <Link to="/main">Inicio</Link>
-                  </Button>
-                  <Button bgColor="#ebc699" leftIcon={<MdAccountBox />} m="10px">
-                    <Link to="/main">ABM</Link>
-                  </Button>
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdHome />}
+                      m="20px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/main">Inicio</Link>
+                    </Button>
+                  </Center>
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdAccountBox />}
+                      isFullWidth="true"
+                      m="10px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/abm">ABM</Link>
+                    </Button>
+                  </Center>
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />
@@ -115,7 +146,11 @@ const Routes = () => {
                   <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
                     <Link to="/main">Inicio</Link>
                   </Button>
-                  <Button bgColor="#ebc699" leftIcon={<MdAccountBox />} m="10px">
+                  <Button
+                    bgColor="#ebc699"
+                    leftIcon={<MdAccountBox />}
+                    m="10px"
+                  >
                     <Link to="/main">ABM</Link>
                   </Button>
                 </VStack>
