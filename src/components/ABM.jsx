@@ -6,8 +6,12 @@ import { Redirect } from "react-router";
 import { logout } from "../protected/AuthService";
 import HeaderModel from "./HeaderModel";
 import AbmModal from "./AbmModal";
+import { useToken } from "@chakra-ui/system";
+import { jwt_decode } from "jwt-decode";
+
 
 const ABM = (props) => {
+  const [token, setToken] = React.useState({})
   const [redirect, handleRedirect] = React.useState(false);
   const [users, setUsers] = React.useState([]);
   const getUsers = async () => {
@@ -40,6 +44,7 @@ const ABM = (props) => {
 
   React.useEffect(() => {
     getUsers();
+    setToken(jwt_decode(localStorage.getItem('token')))
   }, []);
   const logoutHandler = () => {
     logout();
@@ -47,7 +52,7 @@ const ABM = (props) => {
   };
   return !redirect ? (
     <Redirect to="/" />
-  ) : (
+  ) : token.isAdmin === 1? (
     <Container paddingLeft="150px">
       <HStack>
         <HeaderModel text={"Modulo de Usuarios"} />

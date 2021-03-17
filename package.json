@@ -11,6 +11,7 @@
     "@testing-library/react": "^11.2.3",
     "@testing-library/user-event": "^12.6.2",
     "framer-motion": "^3.2.1",
+    "jwt-decode": "^3.1.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-icons": "^4.1.0",
@@ -26,7 +27,6 @@
     "eject": "react-scripts eject"
   },
   "proxy": "http://localhost:3001",
-  
   "eslintConfig": {
     "extends": [
       "react-app",

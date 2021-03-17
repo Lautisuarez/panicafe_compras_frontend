@@ -8,6 +8,7 @@ import { extendTheme } from "@chakra-ui/react";
 import Fonts from "./Fonts";
 import ProtectedRoute from "./protected/ProtectedRoute";
 import ABM from "./components/ABM";
+import jwt_decode from "jwt_decode";
 
 const theme = extendTheme({
   fonts: {
@@ -26,6 +27,10 @@ const theme = extendTheme({
 });
 
 const Routes = () => {
+  const [token, setToken] = React.useState({});
+  React.useEffect(() => {
+    setToken(jwt_decode(localStorage.getItem("token")));
+  }, []);
   return (
     <Router>
       {/* <Switch>
@@ -69,17 +74,19 @@ const Routes = () => {
                       <Link to="/main">Inicio</Link>
                     </Button>
                   </Center>
-                  <Center>
-                    <Button
-                      bgColor="#ebc699"
-                      leftIcon={<MdAccountBox />}
-                      isFullWidth="true"
-                      m="10px 10px 0px 10px"
-                      width="90%"
-                    >
-                      <Link to="/abm">ABM</Link>
-                    </Button>
-                  </Center>
+                  {token.isAdmin === 1 ? (
+                    <Center>
+                      <Button
+                        bgColor="#ebc699"
+                        leftIcon={<MdAccountBox />}
+                        isFullWidth="true"
+                        m="10px 10px 0px 10px"
+                        width="90%"
+                      >
+                        <Link to="/abm">ABM</Link>
+                      </Button>
+                    </Center>
+                  ) : null}
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />
