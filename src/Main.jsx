@@ -44,7 +44,7 @@ const Main = () => {
     getProductos();
   }, []);
 
-  return redirect ? (
+  return !redirect ? (
     <Redirect to="/" />
   ) : renderReady ? (
     <Container paddingLeft="150px">

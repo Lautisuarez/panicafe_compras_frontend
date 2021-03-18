@@ -28,11 +28,11 @@ const theme = extendTheme({
 const Routes = () => {
   return (
     <Router>
-      <Switch>
+      {/* <Switch>
         <Route path="/" exact />
         <Route path="/main" exact />
         <Route path="/abm" exact />
-      </Switch>
+      </Switch> */}
 
       <div style={{ flex: 1, padding: "10px" }}>
         <Switch>
@@ -130,7 +130,7 @@ const Routes = () => {
               </Flex>
             }
           />
-          <Route
+          {/* <Route
             path="/main"
             exact
             children={
@@ -160,7 +160,7 @@ const Routes = () => {
                 </ChakraProvider>
               </Flex>
             }
-          />
+          /> */}
         </Switch>
       </div>
     </Router>

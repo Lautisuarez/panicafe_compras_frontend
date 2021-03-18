@@ -45,7 +45,7 @@ const ABM = (props) => {
     logout();
     handleRedirect(true);
   };
-  return redirect ? (
+  return !redirect ? (
     <Redirect to="/" />
   ) : (
     <Container paddingLeft="150px">
