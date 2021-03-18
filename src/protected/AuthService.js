@@ -1,3 +1,5 @@
+import jwt_decode from "jwt-decode";
+
 export const login = () => {
   window.localStorage.setItem("auth", true);
 };
@@ -8,6 +10,12 @@ export const isAuthenticated = () => {
   } else {
     return true;
   }
+};
+
+export const isAdmin = () => {
+  const token = jwt_decode(localStorage.getItem("token"));
+  if (token.isAdmin === null) return null;
+  return token.isAdmin === 1 ? true : false;
 };
 
 export const logout = () => {

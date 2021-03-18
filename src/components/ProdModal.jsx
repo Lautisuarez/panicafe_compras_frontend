@@ -18,6 +18,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
+import configData from "../config.json";
 
 const ProdModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -35,7 +36,7 @@ const ProdModal = (props) => {
 
   const handleAPICall = async (bd) => {
     // Cambiar link
-    const response = await fetch(configData.SERVER_URL+"/pedidos", {
+    const response = await fetch(configData.SERVER_URL + "/pedidos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

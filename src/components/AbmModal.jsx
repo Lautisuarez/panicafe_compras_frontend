@@ -23,6 +23,8 @@ import PasswordInput from "./PasswordInput";
 
 import { FiPlus } from "react-icons/fi";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import configData from "../config.json";
+
 const AbmModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -38,7 +40,7 @@ const AbmModal = (props) => {
     return <Icon as={FiPlus} />;
   };
   const getInfoAddUser = async () => {
-    const response = await fetch(configData.SERVER_URL+"/getInfoAddUser", {
+    const response = await fetch(configData.SERVER_URL + "/getInfoAddUser", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +52,7 @@ const AbmModal = (props) => {
 
   const handleAPICall = async (usuario, password, isAdmin, nombre, email) => {
     // Cambiar link
-    const response = await fetch(configData.SERVER_URL+"/addUser", {
+    const response = await fetch(configData.SERVER_URL + "/addUser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

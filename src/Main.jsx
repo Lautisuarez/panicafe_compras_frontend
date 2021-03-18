@@ -11,6 +11,7 @@ import HeaderModel from "./components/HeaderModel";
 import TabContainer from "./components/TabContainer";
 import { logout } from "./protected/AuthService";
 import { Redirect } from "react-router-dom";
+import configData from "./config.json";
 
 const Main = () => {
   const [renderReady, handleRender] = React.useState(false);
@@ -19,7 +20,7 @@ const Main = () => {
 
   const getProductos = async () => {
     if (prodList !== []) {
-      fetch(configData.SERVER_URL+"/productos", {
+      fetch(configData.SERVER_URL + "/productos", {
         headers: new Headers({
           Authorization: "Bearer " + localStorage.getItem("token"),
           "Content-Type": "application/json",

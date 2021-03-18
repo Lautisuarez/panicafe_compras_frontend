@@ -8,7 +8,7 @@ import { extendTheme } from "@chakra-ui/react";
 import Fonts from "./Fonts";
 import ProtectedRoute from "./protected/ProtectedRoute";
 import ABM from "./components/ABM";
-import jwt_decode from "jwt_decode";
+import AdminRoute from "./protected/AdminRoute";
 
 const theme = extendTheme({
   fonts: {
@@ -27,18 +27,8 @@ const theme = extendTheme({
 });
 
 const Routes = () => {
-  const [token, setToken] = React.useState({});
-  React.useEffect(() => {
-    setToken(jwt_decode(localStorage.getItem("token")));
-  }, []);
   return (
     <Router>
-      {/* <Switch>
-        <Route path="/" exact />
-        <Route path="/main" exact />
-        <Route path="/abm" exact />
-      </Switch> */}
-
       <div style={{ flex: 1, padding: "10px" }}>
         <Switch>
           <Route
@@ -51,6 +41,7 @@ const Routes = () => {
               </ChakraProvider>
             }
           />
+
           <ProtectedRoute
             path="/main"
             exact
@@ -64,29 +55,16 @@ const Routes = () => {
                   left="0"
                   h="100%"
                 >
-                  <Center>
-                    <Button
-                      bgColor="#ebc699"
-                      leftIcon={<MdHome />}
-                      m="20px 10px 0px 10px"
-                      width="90%"
-                    >
-                      <Link to="/main">Inicio</Link>
-                    </Button>
-                  </Center>
-                  {token.isAdmin === 1 ? (
-                    <Center>
-                      <Button
-                        bgColor="#ebc699"
-                        leftIcon={<MdAccountBox />}
-                        isFullWidth="true"
-                        m="10px 10px 0px 10px"
-                        width="90%"
-                      >
-                        <Link to="/abm">ABM</Link>
-                      </Button>
-                    </Center>
-                  ) : null}
+                  <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
+                    <Link to="/main">Inicio</Link>
+                  </Button>
+                  <Button
+                    bgColor="#ebc699"
+                    leftIcon={<MdAccountBox />}
+                    m="10px"
+                  >
+                    <Link to="/main">ABM</Link>
+                  </Button>
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />
@@ -95,7 +73,7 @@ const Routes = () => {
               </Flex>
             }
           />
-          <ProtectedRoute
+          <AdminRoute
             path="/abm"
             exact
             children={
@@ -137,8 +115,16 @@ const Routes = () => {
               </Flex>
             }
           />
-          {/* <Route
-            path="/main"
+        </Switch>
+      </div>
+    </Router>
+  );
+};
+
+export default Routes;
+
+/*           <Route
+            path="/"
             exact
             children={
               <Flex>
@@ -150,28 +136,21 @@ const Routes = () => {
                   left="0"
                   h="100%"
                 >
-                  <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
-                    <Link to="/main">Inicio</Link>
-                  </Button>
-                  <Button
-                    bgColor="#ebc699"
-                    leftIcon={<MdAccountBox />}
-                    m="10px"
-                  >
-                    <Link to="/main">ABM</Link>
-                  </Button>
-                </VStack>
-                <ChakraProvider theme={theme}>
-                  <Fonts />
-                  <Main />
-                </ChakraProvider>
-              </Flex>
-            }
-          /> */}
-        </Switch>
-      </div>
-    </Router>
-  );
-};
-
-export default Routes;
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdHome />}
+                      m="20px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/main">Inicio</Link>
+                    </Button>
+                  </Center>
+                  </VStack>
+                  <ChakraProvider theme={theme}>
+                    <Fonts />
+                    <Main />
+                  </ChakraProvider>
+                </Flex>
+              }
+            /> */
