@@ -28,6 +28,7 @@ import configData from "../config.json";
 const AbmModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [select, setSelect] = React.useState("");
   const [infoAddUser, setInfoAddUser] = React.useState([]);
   const [id, setId] = React.useState(0);
   const [user, setUser] = React.useState("");
@@ -126,21 +127,28 @@ const AbmModal = (props) => {
                         rightIcon={<ChevronDownIcon />}
                         isFullWidth="true"
                       >
-                        {isOpen ? "Cerrar" : "Sucursal"}
+                        {isOpen
+                          ? "Cerrar"
+                          : select === ""
+                          ? "Sucursal"
+                          : select}
                       </MenuButton>
                       <MenuList>
                         {/* Mapeo de sucursal */}
-                        { infoAddUser.length > 0 ?
-                        infoAddUser.map((datos) => {
-                          return (
-                            <MenuItem onClick={() => setId(datos.id)}>
-                              {datos.nombre}
-                            </MenuItem>
-                          );
-                        })
-                      :
-                      console.log(infoAddUser)
-                      }
+                        {infoAddUser.length > 0
+                          ? infoAddUser.map((datos) => {
+                              return (
+                                <MenuItem
+                                  onClick={
+                                    (() => setId(datos.id),
+                                    setSelect(datos.nombre))
+                                  }
+                                >
+                                  {datos.nombre}
+                                </MenuItem>
+                              );
+                            })
+                          : console.log(infoAddUser)}
                       </MenuList>
                     </>
                   )}
