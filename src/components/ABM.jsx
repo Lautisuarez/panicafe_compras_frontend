@@ -9,6 +9,7 @@ import AbmModal from "./AbmModal";
 import { useToken } from "@chakra-ui/system";
 import jwt_decode from "jwt-decode";
 import configData from "../config.json";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 const ABM = (props) => {
   const [token, setToken] = React.useState({});
@@ -50,6 +51,14 @@ const ABM = (props) => {
     logout();
     handleRedirect(true);
   };
+
+  const confirmation = (user) => {
+    const result = window.confirm(
+      "¿Está seguro de que desea eliminar este usuario)?"
+    );
+    result ? deleteUser(user) : getUsers();
+  };
+
   return redirect ? (
     <Redirect to="/" />
   ) : token.isAdmin === 1 ? (
@@ -80,12 +89,12 @@ const ABM = (props) => {
                       <Td>
                         <ButtonGroup>
                           <Button
-                            variant="red"
-                            onClick={() => deleteUser(user)}
+                            colorScheme="red"
+                            onClick={() => confirmation(user)}
+                            leftIcon={<DeleteIcon />}
                           >
                             Eliminar usuario
                           </Button>
-                          {/* <Button variant="whatsapp">Cambiar contraseña</Button> */}
                         </ButtonGroup>
                       </Td>
                     </Tr>

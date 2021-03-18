@@ -18,11 +18,14 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
 } from "@chakra-ui/react";
 import PasswordInput from "./PasswordInput";
 
 import { FiPlus } from "react-icons/fi";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, WarningIcon } from "@chakra-ui/icons";
 import configData from "../config.json";
 
 const AbmModal = (props) => {
@@ -73,6 +76,22 @@ const AbmModal = (props) => {
 
     setUserCreated(false);
   };
+
+  const validateEmail = (email) => {
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
+  const formValidation = () => {
+    return validateEmail(email) &&
+      nombre !== "" &&
+      user !== "" &&
+      password !== "" &&
+      select !== ""
+      ? false
+      : true;
+  };
+
   return (
     <>
       <IconButton
@@ -99,18 +118,38 @@ const AbmModal = (props) => {
                     setNombre(event.target.value);
                   }}
                 />
+                {nombre === "" ? null : (
+                  <Tag>
+                    <TagLeftIcon as={<WarningIcon />} />
+                    <TagLabel>Por favor ingrese nombre.</TagLabel>
+                  </Tag>
+                )}
                 <Input
                   placeholder="Email"
                   onChange={(event) => {
                     setEmail(event.target.value);
                   }}
                 />
+                {validateEmail(email) ? null : (
+                  <Tag>
+                    <TagLeftIcon as={<WarningIcon />} />
+                    <TagLabel>
+                      Por favor ingrese un formato de email válido.
+                    </TagLabel>
+                  </Tag>
+                )}
                 <Input
                   placeholder="Usuario"
                   onChange={(event) => {
                     setUser(event.target.value);
                   }}
                 />
+                {user === "" ? null : (
+                  <Tag>
+                    <TagLeftIcon as={<WarningIcon />} />
+                    <TagLabel>Por favor ingrese un usuario.</TagLabel>
+                  </Tag>
+                )}
 
                 <PasswordInput
                   onChange={(event) => {
@@ -118,6 +157,12 @@ const AbmModal = (props) => {
                   }}
                   placeholder={"Contraseña"}
                 />
+                {validateEmail(email) ? null : (
+                  <Tag>
+                    <TagLeftIcon as={<WarningIcon />} />
+                    <TagLabel>Por favor ingrese una contraseña.</TagLabel>
+                  </Tag>
+                )}
                 <Menu>
                   {({ isOpen }) => (
                     <>
@@ -134,21 +179,21 @@ const AbmModal = (props) => {
                           : select}
                       </MenuButton>
                       <MenuList>
-                        {/* Mapeo de sucursal */}
-                        {infoAddUser.length > 0
-                          ? infoAddUser.map((datos) => {
-                              return (
-                                <MenuItem
-                                  onClick={
-                                    (() => setId(datos.id),
-                                    setSelect(datos.nombre))
-                                  }
-                                >
-                                  {datos.nombre}
-                                </MenuItem>
-                              );
-                            })
-                          : console.log(infoAddUser)}
+                        {infoAddUser.map((datos) => {
+                          console.log(datos);
+                          if (datos.nombre === "" || datos.id === "")
+                            return null;
+
+                          return (
+                            <MenuItem
+                              onClick={
+                                (() => setId(datos.id), setSelect(datos.nombre))
+                              }
+                            >
+                              {datos.nombre}
+                            </MenuItem>
+                          );
+                        })}
                       </MenuList>
                     </>
                   )}
@@ -165,6 +210,7 @@ const AbmModal = (props) => {
                 onClick={() =>
                   handleAPICall(user, password, isAdmin, nombre, email)
                 }
+                isDisabled={() => formValidation()}
               >
                 Enviar
               </Button>

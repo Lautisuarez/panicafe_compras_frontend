@@ -4,6 +4,7 @@ import PasswordInput from "./components/PasswordInput";
 import { Redirect } from "react-router-dom";
 
 import configData from "./config.json";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 const Login = () => {
   const [response, handleResponse] = React.useState(false);
@@ -22,7 +23,7 @@ const Login = () => {
   };
 
   const login = async () => {
-    const response = await fetch(configData.SERVER_URL+"/login", {
+    const response = await fetch(configData.SERVER_URL + "/login", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -62,6 +63,7 @@ const Login = () => {
               setUser(event.target.value);
             }}
           />
+
           <PasswordInput
             onChange={(event) => {
               setPassword(event.target.value);
