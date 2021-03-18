@@ -47,7 +47,8 @@ const AbmModal = (props) => {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
     });
-    setInfoAddUser(response);
+
+    setInfoAddUser(await response.json());
   };
 
   const handleAPICall = async (usuario, password, isAdmin, nombre, email) => {
@@ -129,13 +130,17 @@ const AbmModal = (props) => {
                       </MenuButton>
                       <MenuList>
                         {/* Mapeo de sucursal */}
-                        {infoAddUser.map((datos) => {
+                        { infoAddUser.length > 0 ?
+                        infoAddUser.map((datos) => {
                           return (
-                            <MenuItem onClick={setId(datos.id)}>
+                            <MenuItem onClick={() => setId(datos.id)}>
                               {datos.nombre}
                             </MenuItem>
                           );
-                        })}
+                        })
+                      :
+                      console.log(infoAddUser)
+                      }
                       </MenuList>
                     </>
                   )}

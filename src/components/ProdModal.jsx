@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
 import configData from "../config.json";
+import jwt_decode from "jwt-decode";
 
 const ProdModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -67,7 +68,7 @@ const ProdModal = (props) => {
     // Armando objeto pedido
     const pedido = {
       precioTotal: totalPedido,
-      idCliente: 2,
+      idCliente: jwt_decode(localStorage.getItem("token")).id,
       fecha: date,
       productos: props.prodList,
     };
@@ -122,7 +123,7 @@ const ProdModal = (props) => {
                             <Td w="100%">
                               {capitalizeFirstLetter(producto.descripcion)}
                             </Td>
-                            <Td isNumeric>${totalUnitario}</Td>
+                            <Td isNumeric>${parseFloat(totalUnitario).toFixed(2)}</Td>
                           </Tr>
                         );
                       } else {

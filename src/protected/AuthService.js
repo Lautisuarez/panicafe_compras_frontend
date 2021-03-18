@@ -21,5 +21,6 @@ export const isAdmin = () => {
 export const logout = () => {
   if (window.localStorage.getItem("auth") != null) {
     window.localStorage.removeItem("auth");
+    window.localStorage.clear()
   }
 };

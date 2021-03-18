@@ -50,7 +50,7 @@ const ABM = (props) => {
     logout();
     handleRedirect(true);
   };
-  return !redirect ? (
+  return redirect ? (
     <Redirect to="/" />
   ) : token.isAdmin === 1 ? (
     <Container paddingLeft="150px">

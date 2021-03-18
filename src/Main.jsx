@@ -30,6 +30,7 @@ const Main = () => {
         .then((res) => {
           res.map((prod) => (prod.show = true));
           handleProdList(res);
+          // console.log("productos",res)
         })
         .then(() => handleRender(true))
         .catch((error) => console.error(error));
@@ -45,7 +46,7 @@ const Main = () => {
     getProductos();
   }, []);
 
-  return !redirect ? (
+  return redirect ? (
     <Redirect to="/" />
   ) : renderReady ? (
     <Container paddingLeft="150px">

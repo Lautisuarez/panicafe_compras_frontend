@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Center, ChakraProvider, Flex, VStack } from "@chakra-ui/react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { MdAccountBox, MdHome } from "react-icons/md";
@@ -9,7 +9,8 @@ import Fonts from "./Fonts";
 import ProtectedRoute from "./protected/ProtectedRoute";
 import ABM from "./components/ABM";
 import AdminRoute from "./protected/AdminRoute";
-
+import { isAdmin } from "./protected/AuthService";
+import AdminABMButton from './AdminABMButton'
 const theme = extendTheme({
   fonts: {
     heading: "Bitter",
@@ -27,6 +28,7 @@ const theme = extendTheme({
 });
 
 const Routes = () => {
+
   return (
     <Router>
       <div style={{ flex: 1, padding: "10px" }}>
@@ -58,13 +60,8 @@ const Routes = () => {
                   <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
                     <Link to="/main">Inicio</Link>
                   </Button>
-                  <Button
-                    bgColor="#ebc699"
-                    leftIcon={<MdAccountBox />}
-                    m="10px"
-                  >
-                    <Link to="/main">ABM</Link>
-                  </Button>
+                  <AdminABMButton />
+                  
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />
