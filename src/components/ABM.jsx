@@ -15,7 +15,7 @@ const ABM = (props) => {
   const [redirect, handleRedirect] = React.useState(false);
   const [users, setUsers] = React.useState([]);
   const getUsers = async () => {
-    const response = await fetch("http://localhost:3001/getUsers", {
+    const response = await fetch(configData.SERVER_URL+"/getUsers", {
       method: "GET",
       headers: new Headers({
         Authorization: "Bearer " + localStorage.getItem("token"),
@@ -27,7 +27,7 @@ const ABM = (props) => {
     setUsers(data);
   };
   const deleteUser = async (usuario) => {
-    const response = await fetch("http://localhost:3001/deleteUser", {
+    const response = await fetch(configData.SERVER_URL+"/deleteUser", {
       method: "DELETE",
       headers: new Headers({
         Authorization: "Bearer " + localStorage.getItem("token"),
@@ -54,6 +54,7 @@ const ABM = (props) => {
     <Redirect to="/" />
   ) : token.isAdmin === 1? (
     <Container paddingLeft="150px">
+
       <HStack>
         <HeaderModel text={"Modulo de Usuarios"} />
         <Spacer />
@@ -91,12 +92,14 @@ const ABM = (props) => {
                     </Tr>
                   );
                 })
-              : null}
+              : null }  
           </Tbody>
         </Table>
       </VStack>
     </Container>
-  );
+    
+    
+  ) : null;
 };
 
 export default ABM;

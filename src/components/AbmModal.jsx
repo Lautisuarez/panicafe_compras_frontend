@@ -38,7 +38,7 @@ const AbmModal = (props) => {
     return <Icon as={FiPlus} />;
   };
   const getInfoAddUser = async () => {
-    const response = await fetch("http://107.180.107.29:3001/getInfoAddUser", {
+    const response = await fetch(configData.SERVER_URL+"/getInfoAddUser", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ const AbmModal = (props) => {
 
   const handleAPICall = async (usuario, password, isAdmin, nombre, email) => {
     // Cambiar link
-    const response = await fetch("http://107.180.107.29:3001/addUser", {
+    const response = await fetch(configData.SERVER_URL+"/addUser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -3,6 +3,8 @@ import * as React from "react";
 import PasswordInput from "./components/PasswordInput";
 import { Redirect } from "react-router-dom";
 
+import configData from "./config.json";
+
 const Login = () => {
   const [response, handleResponse] = React.useState(false);
   const [user, setUser] = React.useState("");
@@ -20,7 +22,7 @@ const Login = () => {
   };
 
   const login = async () => {
-    const response = await fetch("http://107.180.107.29:3001/login", {
+    const response = await fetch(configData.SERVER_URL+"/login", {
       method: "POST",
       headers: {
         Accept: "application/json",
