@@ -36,7 +36,6 @@ const ProdModal = (props) => {
   };
 
   const handleAPICall = async (bd) => {
-    // Cambiar link
     const response = await fetch(configData.SERVER_URL + "/pedidos", {
       method: "POST",
       headers: {
@@ -45,13 +44,10 @@ const ProdModal = (props) => {
       },
       body: JSON.stringify(bd),
     });
-    // Manejo de Modal
     if (response.status !== 201) {
       alert("error");
     }
     handleSent(true);
-    // Espacio para manejar response
-    // const myJson = await response.json();
   };
 
   const sendPedido = async () => {
@@ -123,7 +119,9 @@ const ProdModal = (props) => {
                             <Td w="100%">
                               {capitalizeFirstLetter(producto.descripcion)}
                             </Td>
-                            <Td isNumeric>${parseFloat(totalUnitario).toFixed(2)}</Td>
+                            <Td isNumeric>
+                              ${parseFloat(totalUnitario).toFixed(2)}
+                            </Td>
                           </Tr>
                         );
                       } else {

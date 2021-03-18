@@ -10,7 +10,7 @@ import ProtectedRoute from "./protected/ProtectedRoute";
 import ABM from "./components/ABM";
 import AdminRoute from "./protected/AdminRoute";
 import { isAdmin } from "./protected/AuthService";
-import AdminABMButton from './AdminABMButton'
+import AdminABMButton from "./AdminABMButton";
 const theme = extendTheme({
   fonts: {
     heading: "Bitter",
@@ -28,7 +28,6 @@ const theme = extendTheme({
 });
 
 const Routes = () => {
-
   return (
     <Router>
       <div style={{ flex: 1, padding: "10px" }}>
@@ -61,7 +60,6 @@ const Routes = () => {
                     <Link to="/main">Inicio</Link>
                   </Button>
                   <AdminABMButton />
-                  
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />
@@ -119,35 +117,3 @@ const Routes = () => {
 };
 
 export default Routes;
-
-/*           <Route
-            path="/"
-            exact
-            children={
-              <Flex>
-                <VStack
-                  bgColor="#f7d4ab"
-                  z-index="1"
-                  position="fixed"
-                  top="0"
-                  left="0"
-                  h="100%"
-                >
-                  <Center>
-                    <Button
-                      bgColor="#ebc699"
-                      leftIcon={<MdHome />}
-                      m="20px 10px 0px 10px"
-                      width="90%"
-                    >
-                      <Link to="/main">Inicio</Link>
-                    </Button>
-                  </Center>
-                  </VStack>
-                  <ChakraProvider theme={theme}>
-                    <Fonts />
-                    <Main />
-                  </ChakraProvider>
-                </Flex>
-              }
-            /> */

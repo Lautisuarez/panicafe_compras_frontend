@@ -140,15 +140,14 @@ const ProdTable = (props) => {
                           colorScheme="whatsapp"
                           icon={<ArrowRightIcon />}
                           onClick={() => {
-                            values[index]?.value > 0 ? 
-                            handleProd(
-                              producto.descripcion,
-                              producto.precio,
-                              producto.id,
-                              values[index].value
-                            )
-                            :
-                            console.log("1");
+                            values[index]?.value > 0
+                              ? handleProd(
+                                  producto.descripcion,
+                                  producto.precio,
+                                  producto.id,
+                                  values[index].value
+                                )
+                              : console.error("Error de añadido.");
                           }}
                         />
                       </HStack>

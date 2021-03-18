@@ -15,30 +15,28 @@ const Signup = () => {
     handleResponse(false);
   };
   const signUp = async () => {
-    const response = await fetch(configData.SERVER_URL+"/adduser", {
-      method: 'POST',
+    const response = await fetch(configData.SERVER_URL + "/adduser", {
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({usuario: user, pass: password})
+      body: JSON.stringify({ usuario: user, pass: password }),
     });
 
     if (response.status === 200) {
-        const data = await response.json()
-        const token = data.token
-        //guardar token en localstorage (sessionstorage se cierra siempre, re molesto)
-        return handleResponse(true)
+      const data = await response.json();
+      const token = data.token;
+      //guardar token en localstorage (sessionstorage se cierra siempre, re molesto)
+      return handleResponse(true);
     }
     //Poner los else if que hay (usuario no existe, o contraseña incorrecta, comprobalos en el postman)
-    else if ( response.status === 404) {
-      return alert("Error usuario inexistente")
-    } 
-    else if ( response.status === 401) {
-      return alert("Contraseña Incorrecta")
-    } 
-  }
-
+    else if (response.status === 404) {
+      return alert("Error usuario inexistente");
+    } else if (response.status === 401) {
+      return alert("Contraseña Incorrecta");
+    }
+  };
 
   return response ? (
     <Redirect to="/main" />
@@ -49,17 +47,14 @@ const Signup = () => {
         <Image src="https://imgur.com/20VHT84.png" w="50%" />
 
         <VStack>
-          {/* <HeaderModel text="Identifiquese" /> */}
           <Spacer />
-          <Input placeholder="Ingrese el nuevo usuario" 
-          onChange=
-          {
-            (event) => {
+          <Input
+            placeholder="Ingrese el nuevo usuario"
+            onChange={(event) => {
               setUser(event.target.value);
-            }
-          }
+            }}
           />
-          <PasswordInput 
+          <PasswordInput
             onChange={(event) => {
               setPassword(event.target.value);
             }}

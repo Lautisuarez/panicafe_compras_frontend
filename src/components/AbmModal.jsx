@@ -56,7 +56,6 @@ const AbmModal = (props) => {
   };
 
   const handleAPICall = async (usuario, password, isAdmin, nombre, email) => {
-    // Cambiar link
     const response = await fetch(configData.SERVER_URL + "/addUser", {
       method: "POST",
       headers: {
@@ -180,7 +179,6 @@ const AbmModal = (props) => {
                       </MenuButton>
                       <MenuList>
                         {infoAddUser.map((datos) => {
-                          console.log(datos);
                           if (datos.nombre === "" || datos.id === "")
                             return null;
 

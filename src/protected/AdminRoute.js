@@ -22,9 +22,3 @@ const AdminRoute = ({ component: Component, ...rest }) => {
 };
 
 export default AdminRoute;
-
-/* isAuthenticated() === true ? (
-    <Component {...props} />
-  ) : (
-    <Redirect to={{ pathname: "/", state: { from: props.location } }} />
-  ) */

@@ -24,7 +24,6 @@ const ABM = (props) => {
       }),
     });
     const data = await response.json();
-    console.log(data);
     setUsers(data);
   };
   const deleteUser = async (usuario) => {
@@ -39,7 +38,6 @@ const ABM = (props) => {
       }),
     });
     const data = await response.json();
-    console.log(data);
     getUsers();
   };
 

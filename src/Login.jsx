@@ -35,12 +35,9 @@ const Login = () => {
     if (response.status === 200) {
       const data = await response.json();
       const token = data.token;
-      //guardar token en localstorage (sessionstorage se cierra siempre, re molesto)
       localStorage.setItem("token", token);
       return handleResponse(true);
-    }
-    //Poner los else if que hay (usuario no existe, o contraseña incorrecta, comprobalos en el postman)
-    else if (response.status === 404) {
+    } else if (response.status === 404) {
       return alert("Error usuario inexistente");
     } else if (response.status === 401) {
       return alert("Contraseña Incorrecta");
