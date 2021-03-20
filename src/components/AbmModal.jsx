@@ -18,14 +18,11 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Tag,
-  TagLabel,
-  TagLeftIcon,
 } from "@chakra-ui/react";
 import PasswordInput from "./PasswordInput";
 
 import { FiPlus } from "react-icons/fi";
-import { ChevronDownIcon, WarningIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import configData from "../config.json";
 import AlertModel from "./AlertModel";
 
@@ -90,6 +87,12 @@ const AbmModal = (props) => {
       select !== ""
       ? false
       : true;
+  };
+
+  const onDropSelect = (item) => {
+    console.log("ESTOY MANDANDO ESTE ID Y ESTE NOMBRE: ", item.id, item.nombre);
+    setId(item.id);
+    setSelect(item.nombre);
   };
 
   return (
@@ -170,18 +173,7 @@ const AbmModal = (props) => {
                             return null;
 
                           return (
-                            <MenuItem
-                              onClick={
-                                (() =>
-                                  console.log(
-                                    "ESTOY MANDANDO ESTE ID Y ESTE NOMBRE: ",
-                                    datos.id,
-                                    datos.nombre
-                                  ),
-                                setId(datos.id),
-                                setSelect(datos.nombre))
-                              }
-                            >
+                            <MenuItem onClick={() => onDropSelect(datos)}>
                               {datos.nombre}
                             </MenuItem>
                           );
