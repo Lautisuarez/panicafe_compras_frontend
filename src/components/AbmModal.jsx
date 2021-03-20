@@ -172,7 +172,14 @@ const AbmModal = (props) => {
                           return (
                             <MenuItem
                               onClick={
-                                (() => setId(datos.id), setSelect(datos.nombre))
+                                (() =>
+                                  console.log(
+                                    "ESTOY MANDANDO ESTE ID Y ESTE NOMBRE: ",
+                                    datos.id,
+                                    datos.nombre
+                                  ),
+                                setId(datos.id),
+                                setSelect(datos.nombre))
                               }
                             >
                               {datos.nombre}
