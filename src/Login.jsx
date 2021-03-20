@@ -4,7 +4,6 @@ import PasswordInput from "./components/PasswordInput";
 import { Redirect } from "react-router-dom";
 
 import configData from "./config.json";
-import { DeleteIcon } from "@chakra-ui/icons";
 
 const Login = () => {
   const [response, handleResponse] = React.useState(false);
@@ -17,8 +16,14 @@ const Login = () => {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleClick();
+    if (event.keyCode === 13) handleClick();
+  };
+
+  const passwordHandler = (event) => {
+    if (event.keyCode !== 13) {
+      setPassword(event.target.value);
+    } else {
+      handleKeyPress(event);
     }
   };
 
@@ -59,15 +64,21 @@ const Login = () => {
             onChange={(event) => {
               setUser(event.target.value);
             }}
+            onKeyDown={(event) => handleKeyPress(event)}
+            tabIndex="0"
           />
 
           <PasswordInput
-            onChange={(event) => {
-              setPassword(event.target.value);
-            }}
+            onChange={(event) => passwordHandler(event)}
             placeholder={"Ingrese su contraseña"}
+            onKeyDown={(event) => handleKeyPress(event)}
+            tabIndex="0"
           />
-          <Button onClick={handleClick} onKeyDown={handleKeyPress}>
+          <Button
+            onClick={handleClick}
+            onKeyDown={(event) => handleKeyPress(event)}
+            tabIndex="0"
+          >
             Enviar
           </Button>
         </VStack>

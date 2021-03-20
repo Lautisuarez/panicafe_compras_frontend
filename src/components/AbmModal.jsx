@@ -90,7 +90,6 @@ const AbmModal = (props) => {
   };
 
   const onDropSelect = (item) => {
-    console.log("ESTOY MANDANDO ESTE ID Y ESTE NOMBRE: ", item.id, item.nombre);
     setId(item.id);
     setSelect(item.nombre);
   };
