@@ -121,9 +121,9 @@ const AbmModal = (props) => {
                     setNombre(event.target.value);
                   }}
                 />
-                {nombre === "" ? null : (
+                {nombre === "" ? (
                   <AlertModel text="Por favor ingrese nombre." />
-                )}
+                ) : null}
                 <Input
                   placeholder="Email"
                   onChange={(event) => {
@@ -139,9 +139,9 @@ const AbmModal = (props) => {
                     setUser(event.target.value);
                   }}
                 />
-                {user === "" ? null : (
+                {user === "" ? (
                   <AlertModel text="Por favor ingrese un usuario." />
-                )}
+                ) : null}
 
                 <PasswordInput
                   onChange={(event) => {
@@ -149,9 +149,9 @@ const AbmModal = (props) => {
                   }}
                   placeholder={"Contraseña"}
                 />
-                {password === "" ? null : (
+                {password === "" ? (
                   <AlertModel text="Por favor ingrese una contraseña segura" />
-                )}
+                ) : null}
                 <Menu>
                   {({ isOpen }) => (
                     <>
