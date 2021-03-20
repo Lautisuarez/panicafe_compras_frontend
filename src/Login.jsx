@@ -67,7 +67,7 @@ const Login = () => {
             }}
             placeholder={"Ingrese su contraseña"}
           />
-          <Button onClick={handleClick} onKeyPress={handleKeyPress}>
+          <Button onClick={handleClick} onKeyDown={handleKeyPress}>
             Enviar
           </Button>
         </VStack>

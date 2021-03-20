@@ -81,6 +81,7 @@ const ABM = (props) => {
           <Tbody>
             {users.length > 0
               ? users.map((user) => {
+                  if (user === null) return null;
                   return (
                     <Tr>
                       <Td>{user}</Td>

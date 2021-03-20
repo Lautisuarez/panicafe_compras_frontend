@@ -80,7 +80,7 @@ const AbmModal = (props) => {
   };
 
   const formValidation = () => {
-    return validateEmail(email) &&
+    return !validateEmail(email) &&
       nombre !== "" &&
       user !== "" &&
       password !== "" &&
