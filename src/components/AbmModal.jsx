@@ -27,6 +27,7 @@ import PasswordInput from "./PasswordInput";
 import { FiPlus } from "react-icons/fi";
 import { ChevronDownIcon, WarningIcon } from "@chakra-ui/icons";
 import configData from "../config.json";
+import AlertModel from "./AlertModel";
 
 const AbmModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -118,10 +119,7 @@ const AbmModal = (props) => {
                   }}
                 />
                 {nombre === "" ? null : (
-                  <Tag>
-                    <TagLeftIcon as={<WarningIcon />} />
-                    <TagLabel>Por favor ingrese nombre.</TagLabel>
-                  </Tag>
+                  <AlertModel text="Por favor ingrese nombre." />
                 )}
                 <Input
                   placeholder="Email"
@@ -130,12 +128,7 @@ const AbmModal = (props) => {
                   }}
                 />
                 {validateEmail(email) ? null : (
-                  <Tag>
-                    <TagLeftIcon as={<WarningIcon />} />
-                    <TagLabel>
-                      Por favor ingrese un formato de email válido.
-                    </TagLabel>
-                  </Tag>
+                  <AlertModel text="Por favor ingrese un formato de email válido." />
                 )}
                 <Input
                   placeholder="Usuario"
@@ -144,10 +137,7 @@ const AbmModal = (props) => {
                   }}
                 />
                 {user === "" ? null : (
-                  <Tag>
-                    <TagLeftIcon as={<WarningIcon />} />
-                    <TagLabel>Por favor ingrese un usuario.</TagLabel>
-                  </Tag>
+                  <AlertModel text="Por favor ingrese un usuario." />
                 )}
 
                 <PasswordInput
@@ -156,11 +146,8 @@ const AbmModal = (props) => {
                   }}
                   placeholder={"Contraseña"}
                 />
-                {validateEmail(email) ? null : (
-                  <Tag>
-                    <TagLeftIcon as={<WarningIcon />} />
-                    <TagLabel>Por favor ingrese una contraseña.</TagLabel>
-                  </Tag>
+                {password === "" ? null : (
+                  <AlertModel text="Por favor ingrese una contraseña segura" />
                 )}
                 <Menu>
                   {({ isOpen }) => (
