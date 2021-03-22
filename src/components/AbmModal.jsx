@@ -90,6 +90,7 @@ const AbmModal = (props) => {
         ? false
         : true;
     const resToText = `${res}`;
+    console.log("Funciona:_ ", res, resToText);
     return resToText;
   };
 
