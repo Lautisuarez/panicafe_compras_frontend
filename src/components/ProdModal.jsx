@@ -132,7 +132,9 @@ const ProdModal = (props) => {
                       <Th>Total del pedido</Th>
                       <Td></Td>
                       <Td isNumeric fontWeight="semibold">
-                        {totalPedido > 0 ? `$${totalPedido}` : "$0"}
+                        {totalPedido > 0
+                          ? `$${parseFloat(totalPedido).toFixed(2)}`
+                          : "$0"}
                       </Td>
                     </Tr>
                   </Tbody>

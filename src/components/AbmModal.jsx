@@ -29,6 +29,7 @@ import AlertModel from "./AlertModel";
 const AbmModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [isValidated, setValidated] = React.useState(false);
   const [select, setSelect] = React.useState("");
   const [infoAddUser, setInfoAddUser] = React.useState([]);
   const [id, setId] = React.useState(0);
@@ -89,15 +90,17 @@ const AbmModal = (props) => {
       select !== ""
         ? false
         : true;
-    const resToText = `${res}`;
-    console.log("Funciona:_ ", res, resToText);
-    return resToText;
+    setValidated(res);
   };
 
   const onDropSelect = (item) => {
     setId(item.id);
     setSelect(item.nombre);
   };
+
+  React.useEffect(() => {
+    formValidation();
+  }, [nombre, user, password, select, validateEmail(email)]);
 
   return (
     <>
@@ -198,7 +201,7 @@ const AbmModal = (props) => {
                 onClick={() =>
                   handleAPICall(user, password, isAdmin, nombre, email)
                 }
-                isDisabled={() => formValidation()}
+                isDisabled={isValidated}
               >
                 Enviar
               </Button>
