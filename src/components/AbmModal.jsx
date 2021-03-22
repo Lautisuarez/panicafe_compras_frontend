@@ -62,6 +62,7 @@ const AbmModal = (props) => {
       },
       body: JSON.stringify({ id, isAdmin, usuario, password, nombre, email }),
     });
+    console.log(response); //!!CHECK RESPONSE FOR FIXING
     if (response.status === 201) {
       setUserCreated(true);
     }
@@ -80,13 +81,16 @@ const AbmModal = (props) => {
   };
 
   const formValidation = () => {
-    return validateEmail(email) &&
+    const res =
+      validateEmail(email) &&
       nombre !== "" &&
       user !== "" &&
       password !== "" &&
       select !== ""
-      ? false
-      : true;
+        ? false
+        : true;
+    const resToText = `${res}`;
+    return resToText;
   };
 
   const onDropSelect = (item) => {
