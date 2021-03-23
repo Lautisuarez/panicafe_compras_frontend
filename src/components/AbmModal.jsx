@@ -63,7 +63,7 @@ const AbmModal = (props) => {
       },
       body: JSON.stringify({ id, isAdmin, usuario, password, nombre, email }),
     });
-    console.log(response); //!!CHECK RESPONSE FOR FIXING
+    console.log(response);
     if (response.status === 201) {
       setUserCreated(true);
     }

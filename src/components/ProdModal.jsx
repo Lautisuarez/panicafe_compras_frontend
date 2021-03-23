@@ -47,7 +47,9 @@ const ProdModal = (props) => {
     if (response.status !== 201) {
       alert("error");
     }
-    handleSent(true);
+    if (response.status === 201) {
+      handleSent(true);
+    }
   };
 
   const sendPedido = async () => {
