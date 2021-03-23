@@ -56,10 +56,19 @@ const Routes = () => {
                   left="0"
                   h="100%"
                 >
-                  <Button bgColor="#ebc699" leftIcon={<MdHome />} m="10px">
-                    <Link to="/main">Inicio</Link>
-                  </Button>
-                  <AdminABMButton />
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdHome />}
+                      m="20px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/main">Inicio</Link>
+                    </Button>
+                  </Center>
+                  <Center>
+                    <AdminABMButton />
+                  </Center>
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />
@@ -92,15 +101,7 @@ const Routes = () => {
                     </Button>
                   </Center>
                   <Center>
-                    <Button
-                      bgColor="#ebc699"
-                      leftIcon={<MdAccountBox />}
-                      isFullWidth="true"
-                      m="10px 10px 0px 10px"
-                      width="90%"
-                    >
-                      <Link to="/abm">ABM</Link>
-                    </Button>
+                    <AdminABMButton />
                   </Center>
                 </VStack>
                 <ChakraProvider theme={theme}>
