@@ -43,12 +43,13 @@ const Main = () => {
 
   React.useEffect(() => {
     getProductos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return redirect ? (
     <Redirect to="/" />
   ) : renderReady ? (
-    <Container paddingLeft="150px">
+    <Container paddingLeft="150px"> 
       <Container>
         <HStack>
           <HeaderModel m="10px" text="Productos" />

@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Center, ChakraProvider, Flex, VStack } from "@chakra-ui/react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { MdAccountBox, MdHome } from "react-icons/md";
+import { MdHome } from "react-icons/md";
 import Main from "./Main";
 import Login from "./Login";
 import { extendTheme } from "@chakra-ui/react";
@@ -9,8 +9,11 @@ import Fonts from "./Fonts";
 import ProtectedRoute from "./protected/ProtectedRoute";
 import ABM from "./components/ABM";
 import AdminRoute from "./protected/AdminRoute";
-import { isAdmin } from "./protected/AuthService";
+/* import { isAdmin } from "./protected/AuthService"; */
 import AdminABMButton from "./AdminABMButton";
+import PedModal from "./components/PedModal";
+import configData from "./config.json";
+
 const theme = extendTheme({
   fonts: {
     heading: "Bitter",
@@ -28,6 +31,41 @@ const theme = extendTheme({
 });
 
 const Routes = () => {
+  const [pedidosDate, handlePedidosDate] = useState([]);
+  const [mostrarBoton, handleMostrarBoton] = useState(false);
+
+  const getPedidosDate = async () => {
+      fetch(configData.SERVER_URL + "/mispedidos", {
+        method: "POST",
+        headers: new Headers({
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        }),
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          handlePedidosDate(res);
+        })
+        .catch((error) => console.error(error));
+  };
+
+  function handleChange(set) {
+    if (set === "true") {
+      set = true;
+    }
+    handleMostrarBoton(set);
+    getPedidosDate();
+  }
+
+  useEffect(() => {
+    if(localStorage.getItem("pedidos")){
+      handleChange(localStorage.getItem("pedidos"))
+    }else{
+      console.log("cancel")
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); 
+
   return (
     <Router>
       <div style={{ flex: 1, padding: "10px" }}>
@@ -38,7 +76,8 @@ const Routes = () => {
             children={
               <ChakraProvider theme={theme}>
                 <Fonts />
-                <Login />
+                <Login
+                  onSuccesLogin={handleChange} />
               </ChakraProvider>
             }
           />
@@ -69,6 +108,16 @@ const Routes = () => {
                   <Center>
                     <AdminABMButton />
                   </Center>
+                  {mostrarBoton ? (
+                    <Center>
+                      <PedModal
+                        pedidosDate={pedidosDate}/>
+                    </Center>
+                  ) : (
+                    <Center>
+                    </Center>
+                  )
+                  }
                 </VStack>
                 <ChakraProvider theme={theme}>
                   <Fonts />

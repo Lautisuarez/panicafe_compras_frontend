@@ -97,7 +97,7 @@ const ProdTable = (props) => {
           </Tr>
         </Thead>
         <Tbody>
-          {props.ready
+          {props.ready && props.prodList.length > 0
             ? cart.map((producto, index) => {
                 const handleChange = (e, index) => {
                   let newArr = values;
@@ -113,8 +113,7 @@ const ProdTable = (props) => {
                     <Td>
                       <Input
                         data-key={index}
-                        defaultValue={0}
-                        placeholder="..."
+                        placeholder="0"
                         onChange={(event) => handleChange(event, index)}
                         type="number"
                       />
@@ -160,7 +159,9 @@ const ProdTable = (props) => {
                   </Tr>
                 ) : null;
               })
-            : null}
+            : <Tr>
+                <Td>No hay productos disponibles para este rubro</Td>
+              </Tr>}
         </Tbody>
       </Table>
     </Box>

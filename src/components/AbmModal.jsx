@@ -100,6 +100,7 @@ const AbmModal = (props) => {
 
   React.useEffect(() => {
     formValidation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nombre, user, password, select, validateEmail(email)]);
 
   return (

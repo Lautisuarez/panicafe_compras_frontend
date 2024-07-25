@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 
 import configData from "./config.json";
 
-const Login = () => {
+const Login = (props) => {
   const [response, handleResponse] = React.useState(false);
   const [user, setUser] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -41,6 +41,8 @@ const Login = () => {
       const data = await response.json();
       const token = data.token;
       localStorage.setItem("token", token);
+      localStorage.setItem("pedidos", true);
+      props.onSuccesLogin(true);
       return handleResponse(true);
     } else if (response.status === 404) {
       return alert("Error usuario inexistente");
