@@ -4,11 +4,11 @@ import {
   Container,
   CircularProgress,
   Button,
-  HStack,
-  Spacer,
+  Box
 } from "@chakra-ui/react";
 import HeaderModel from "./components/HeaderModel";
 import TabContainer from "./components/TabContainer";
+import CountdownTimer from "./components/CountDownTimer";
 import { logout } from "./protected/AuthService";
 import { Redirect } from "react-router-dom";
 import configData from "./config.json";
@@ -37,6 +37,7 @@ const Main = () => {
   };
 
   const logoutHandler = () => {
+    localStorage.removeItem('timeLeft');
     logout();
     handleRedirect(true);
   };
@@ -49,22 +50,22 @@ const Main = () => {
   return redirect ? (
     <Redirect to="/" />
   ) : renderReady ? (
-    <Container paddingLeft="150px"> 
-      <Container>
-        <HStack>
-          <HeaderModel m="10px" text="Productos" />
-          <Spacer />
-          <Button p="20px" onClick={logoutHandler}>
-            Desconectarse
-          </Button>
-        </HStack>
+    <Box w="100%">
+      <Flex align="center" justify="space-between" w="100%" paddingLeft="190px" paddingRight="30px" marginTop="20px">
+        <CountdownTimer initialMinutes={20} logoutFunction={logoutHandler} />
+        <HeaderModel text="Productos" />
+        <Button p="20px" onClick={logoutHandler}>
+          Desconectarse
+        </Button>
+      </Flex>
+      <Container paddingLeft="150px">
         <TabContainer
           logout={logoutHandler}
           ready={renderReady}
           prodList={prodList}
         />
       </Container>
-    </Container>
+    </Box>
   ) : (
     <Container centerContent>
       <Flex

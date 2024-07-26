@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Center, ChakraProvider, Flex, VStack } from "@chakra-ui/react";
+import { Button, Center, ChakraProvider, Flex, VStack, Image } from "@chakra-ui/react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { MdHome } from "react-icons/md";
 import Main from "./Main";
@@ -95,6 +95,22 @@ const Routes = () => {
                   left="0"
                   h="100%"
                 >
+                  <Center>
+                    <Image
+                      src="https://imgur.com/J9pzeqI.png"
+                      width="50px"
+                      alt="Panicafe Logo"
+                      m="20px 5px 0px 5px"
+                    /> 
+                  </Center>
+                  <Center>
+                    <Image
+                      src="https://imgur.com/20VHT84.png"
+                      width="170px"
+                      alt="Panicafe Logo"
+                      m="0px 5px 0px 5px"
+                    /> 
+                  </Center>
                   <Center>
                     <Button
                       bgColor="#ebc699"

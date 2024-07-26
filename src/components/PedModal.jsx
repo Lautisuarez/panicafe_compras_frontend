@@ -19,9 +19,10 @@ import {
 import configData from "../config.json";
 
 const PedModal = (props) => {
-
   const [historialPedidos, handlehistorialPedidos] = useState(false);  
   const { isOpen, onOpen, onClose } = useDisclosure();
+  let idPedido;
+  let totalPedido = 0;
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -44,9 +45,6 @@ const PedModal = (props) => {
         .catch((error) => console.error(error));
     }
   };
-
-  let idPedido;
-  let totalPedido = 0;
 
   function consultalPedidos(e)   {
     idPedido = props.pedidosDate[e.target.value];
