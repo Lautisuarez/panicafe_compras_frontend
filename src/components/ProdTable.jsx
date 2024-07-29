@@ -14,29 +14,21 @@ const ProdTable = (props) => {
     return array;
   });
 
-  const [addedValues, handleAddedValues] = React.useState(() => {
-    let array = [];
-    const n = props.prodList.length;
-    for (let index = 0; index < n; index++) {
-      array.push({ added: false });
-    }
-    return array;
-  });
-
   const getItemIndex = (arr, item) => {
     return arr.findIndex((e) => e.descripcion === item);
   };
 
-  const handleProd = (product, precio, id, quantity) => {
+  const handleProd = (product, precio, id, rubro, quantity) => {
     if (quantity === undefined) {
       const itemIndex = getItemIndex(cart, product);
       const prodObj = {
         id: id,
         descripcion: product,
         precio: precio,
+        rubro: rubro,
         show: true,
       };
-      addedValuesHandler(itemIndex, 0);
+      props.handleQuantity(prodObj);
       const newArr = [...cart];
       newArr[itemIndex] = prodObj;
       handleCart(newArr);
@@ -47,8 +39,10 @@ const ProdTable = (props) => {
         descripcion: product,
         cantidad: +quantity,
         precio: precio,
+        rubro: rubro,
         show: true,
       };
+      props.handleQuantity(prodObj);
       if (itemIndex === -1) {
         handleCart((prevArray) => [...prevArray, prodObj]);
         return;
@@ -56,19 +50,6 @@ const ProdTable = (props) => {
       const newArr = [...cart];
       newArr[itemIndex] = prodObj;
       handleCart(newArr);
-      addedValuesHandler(itemIndex, 1);
-    }
-  };
-
-  const addedValuesHandler = (index, condition) => {
-    if (condition === 1) {
-      let newArr = addedValues;
-      newArr[index] = { added: true };
-      handleAddedValues(newArr);
-    } else if (condition === 0) {
-      let newArr = addedValues;
-      newArr[index] = { added: false };
-      handleAddedValues(newArr);
     }
   };
 
@@ -76,13 +57,13 @@ const ProdTable = (props) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+  const hasValidProperty = (obj, prop) => {
+    return obj.hasOwnProperty(prop) && obj[prop] !== null && obj[prop] !== undefined && obj[prop] !== '';
+  };
+
   React.useEffect(() => {
     handleCart(props.prodList);
   }, [props.prodList]);
-
-  React.useEffect(() => {
-    props.callback(cart);
-  });
 
   return props.ready ? (
     <Box>
@@ -108,7 +89,7 @@ const ProdTable = (props) => {
                 return producto.show ? (
                   <Tr
                     key={producto.id}
-                    bgColor={addedValues[index].added ? "gainsboro" : "white"}
+                    bgColor={hasValidProperty(producto, 'cantidad') ? "gainsboro" : "white"}
                   >
                     <Td>
                       <Input
@@ -120,7 +101,7 @@ const ProdTable = (props) => {
                     </Td>
                     <Td>
                       <HStack>
-                        {addedValues[index].added ? (
+                        {hasValidProperty(producto, 'cantidad') ? (
                           <IconButton
                             aria-label="Remover"
                             colorScheme="red"
@@ -129,7 +110,8 @@ const ProdTable = (props) => {
                               handleProd(
                                 producto.descripcion,
                                 producto.precio,
-                                producto.id
+                                producto.id,
+                                producto.rubro
                               );
                             }}
                           />
@@ -144,6 +126,7 @@ const ProdTable = (props) => {
                                   producto.descripcion,
                                   producto.precio,
                                   producto.id,
+                                  producto.rubro,
                                   values[index].value
                                 )
                               : console.error("Error de añadido.");

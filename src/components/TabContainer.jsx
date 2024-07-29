@@ -16,30 +16,10 @@ import configData from "../config.json";
 const TabContainer = (props) => {
   const [searchList, handleSearchList] = React.useState([]);
   const [rubroList, handleRubroList] = React.useState([]);
-  let cartList = [];
+  const [prodList, handleProdList] = React.useState([]);
 
   const searchProdList = (x) => {
     handleSearchList(x);
-  };
-
-  const cartFinalList = (newCartList) => {
-    /* Update the cart. Add new products, delete them or modify them. 
-      Params:
-      - newCartList: Array of products with their updated quantities.
-    */
-    let haveUpdated = false;
-    cartList.forEach((prod, index) => {
-      newCartList.forEach((newProd) => {
-        if(prod.id === newProd.id && newProd.cantidad !== undefined){
-          prod["cantidad"] = newProd.cantidad;
-          haveUpdated = true;
-        } else if (prod.id === newProd.id && !('cantidad' in newProd)){
-          cartList[index] = newProd;
-          haveUpdated = true;
-        }
-      })
-    })
-    if(!haveUpdated) cartList.push(...newCartList);
   };
 
   const getRubros = async () => {
@@ -51,6 +31,7 @@ const TabContainer = (props) => {
     })
     .then(response => response.json())
     .then((res) => {
+      res.push({rubro: "Todos"})
       handleRubroList(res);
     })
     .catch((error) => console.error(error));
@@ -58,15 +39,28 @@ const TabContainer = (props) => {
 
   React.useEffect(() => {
     getRubros();
+    handleProdList(props.prodList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const memoizedRubroList = React.useMemo(() => rubroList.map((rubro) => {
-    return {
-      rubro: rubro.rubro,
-      filteredProdList: props.prodList.filter(prod => prod.rubro.trim() === rubro.rubro.trim())
-    };
-  }), [rubroList, props.prodList]);
+  const filterByRubro = (rubro) => {
+    if (rubro === "Todos") {
+      return prodList;
+    } else {
+      return prodList.filter(product => product.rubro.trim() === rubro.trim());
+    }
+  };
+
+  const handleQuantity = (item) => {
+    const newProdList = prodList.map(product => 
+      product.descripcion === item.descripcion 
+        ? { ...product, cantidad: item.cantidad } 
+        : product
+    );
+    
+    handleProdList(newProdList);
+  };
+  
 
   return (
     <VStack mt="15px">
@@ -83,19 +77,19 @@ const TabContainer = (props) => {
             No hay rubros disponibles
           </Tab>}
           <Spacer />
-          <ProdModal prodList={cartList} logout={props.logout} />
+          <ProdModal prodList={prodList} logout={props.logout} />
         </TabList>
 
         <TabPanels>
-          {memoizedRubroList.length > 0 ? 
-            memoizedRubroList.map(({ rubro, filteredProdList }) => (
+          {rubroList.length > 0 ? 
+            rubroList.map(({ rubro }) => (
               <TabPanel key={rubro} index={rubro}>
                 <ProdTable
                   logout={props.logout}
-                  prodList={filteredProdList}
+                  prodList={filterByRubro(rubro)}
                   ready={props.ready}
                   searchList={searchList}
-                  callback={cartFinalList}
+                  handleQuantity={handleQuantity}
                 />
               </TabPanel>
             ))

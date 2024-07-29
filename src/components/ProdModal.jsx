@@ -74,7 +74,7 @@ const ProdModal = (props) => {
     // Enviando pedido
     try {
       const prodFiltrado = pedido.productos.filter(
-        (item) => item.hasOwnProperty("cantidad") && item.cantidad !== 0
+        (item) => item.hasOwnProperty("cantidad") && item.cantidad !== 0 && item.cantidad !== undefined
       );
       const pedidoFiltrado = { ...pedido, productos: prodFiltrado };
       handleAPICall(pedidoFiltrado);
