@@ -2,6 +2,7 @@ import { Button, Center, Image, Input, Spacer, VStack } from "@chakra-ui/react";
 import * as React from "react";
 import PasswordInput from "./components/PasswordInput";
 import { Redirect } from "react-router-dom";
+import { isProduction } from "./protected/AuthService";
 
 import configData from "./config.json";
 
@@ -52,7 +53,7 @@ const Login = (props) => {
   };
 
   return response ? (
-    <Redirect to="/main" />
+    <Redirect to={isProduction() ? "/mainproduction" : "/main"} />
   ) : (
     <Center>
       <Spacer />

@@ -18,6 +18,12 @@ export const isAdmin = () => {
   return token.isAdmin === 1 ? true : false;
 };
 
+export const isProduction = () => {
+  const token = jwt_decode(localStorage.getItem("token"));
+  if (token.isAdmin === null) return null;
+  return token.isAdmin === 2 ? true : false;
+};
+
 export const logout = () => {
   if (window.localStorage.getItem("auth") != null) {
     window.localStorage.removeItem("auth");

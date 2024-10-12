@@ -17,6 +17,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import configData from "../config.json";
+import { FaHistory } from "react-icons/fa";
 
 const PedModal = (props) => {
   const [historialPedidos, handlehistorialPedidos] = useState(false);  
@@ -55,14 +56,15 @@ const PedModal = (props) => {
     <div>
       <Button
         bgColor="#ebc699"
-        m="20px 10px 0px 10px"
+        m="0px 10px 0px 10px"
         width="90%" 
         onClick={onOpen}
+        leftIcon={<FaHistory />}
       >
         Mis Pedidos
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
+      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Historial de pedidos</ModalHeader>
@@ -104,8 +106,7 @@ const PedModal = (props) => {
                         }
                         })}
                         <Tr>
-                          <Th>Total del pedido</Th>
-                          <Td></Td>
+                          <Td colSpan={2}>Total del pedido</Td>
                           <Td isNumeric fontWeight="semibold">
                             {totalPedido > 0
                               ? `$${parseFloat(totalPedido).toFixed(2)}`

@@ -7,41 +7,17 @@ import { logout } from "../protected/AuthService";
 import HeaderModel from "./HeaderModel";
 import AbmModal from "./AbmModal";
 import jwt_decode from "jwt-decode";
-import configData from "../config.json";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { getUsers, deleteUser } from "../api/users";
 
 const ABM = (props) => {
   const [token, setToken] = React.useState({});
   const [redirect, handleRedirect] = React.useState(false);
   const [users, setUsers] = React.useState([]);
-  const getUsers = async () => {
-    const response = await fetch(configData.SERVER_URL + "/getUsers", {
-      method: "GET",
-      headers: new Headers({
-        Authorization: "Bearer " + localStorage.getItem("token"),
-        "Content-Type": "application/json",
-      }),
-    });
-    const data = await response.json();
-    setUsers(data);
-  };
-  const deleteUser = async (usuario) => {
-    const response = await fetch(configData.SERVER_URL + "/deleteUser", {
-      method: "DELETE",
-      headers: new Headers({
-        Authorization: "Bearer " + localStorage.getItem("token"),
-        "Content-Type": "application/json",
-      }),
-      body: JSON.stringify({
-        usuario,
-      }),
-    });
-    const data = await response.json();
-    getUsers();
-  };
 
-  React.useEffect(() => {
-    getUsers();
+
+  React.useEffect(async() => {
+    setUsers(await getUsers());
     setToken(jwt_decode(localStorage.getItem("token")));
   }, []);
   const logoutHandler = () => {
@@ -49,11 +25,14 @@ const ABM = (props) => {
     handleRedirect(true);
   };
 
-  const confirmation = (user) => {
+  const confirmation = async (user) => {
     const result = window.confirm(
       "¿Está seguro de que desea eliminar este usuario)?"
     );
-    result ? deleteUser(user) : getUsers();
+    if(result){
+      await deleteUser(user);
+      setUsers(await getUsers());
+    } 
   };
 
   return redirect ? (
@@ -68,7 +47,7 @@ const ABM = (props) => {
         </Button>
       </HStack>
       <VStack>
-        <AbmModal getUsers={getUsers} />
+        <AbmModal getUsers={async() => setUsers(await getUsers())} />
         <Spacer />
         <Table>
           <Thead>
@@ -82,7 +61,7 @@ const ABM = (props) => {
               ? users.map((user) => {
                   if (user === null) return null;
                   return (
-                    <Tr>
+                    <Tr key={user}>
                       <Td>{user}</Td>
                       <Td>
                         <ButtonGroup>
