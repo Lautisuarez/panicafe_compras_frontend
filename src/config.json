@@ -1,3 +1,4 @@
 {
-  "SERVER_URL": "http://107.180.107.29:3001"
+  "SERVER_URL": "http://localhost:3001",
+  "ORDERS_URL": "http://172.25.1.248:3001"
 }
