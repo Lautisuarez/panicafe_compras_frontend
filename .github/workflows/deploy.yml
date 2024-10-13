@@ -37,13 +37,15 @@ jobs:
           mkdir -p build
           exit
 
-    - name: Copy build to server
+    - name: Copy build to server via SCP
       uses: appleboy/scp-action@v0.1.6
-      with:
-        source: ./build/*
-        target: ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/ivan/web/panicafe-front/build
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.SERVER_PORT }}
+      env:
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_PORT: ${{ secrets.SERVER_PORT }}
+        SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        SOURCE: "build/*"
+        TARGET: "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/ivan/web/panicafe-front/build"
 
     - name: Start frontend
       uses: appleboy/ssh-action@v0.1.6
@@ -53,5 +55,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SERVER_PORT }}
         script: |
-          cd /ruta/a/tu/frontend
+          cd /home/ivan/web/panicafe-front
           serve -s -n build
