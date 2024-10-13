@@ -43,7 +43,7 @@ jobs:
         SERVER_HOST: ${{ secrets.SERVER_HOST }}
         SERVER_USER: ${{ secrets.SERVER_USER }}
         SERVER_PORT: ${{ secrets.SERVER_PORT }}
-        SERVER_KEY: ${{ secrets.SERVER_KEY }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         SOURCE: "build/*"
         TARGET: "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/ivan/web/panicafe-front/build"
 
