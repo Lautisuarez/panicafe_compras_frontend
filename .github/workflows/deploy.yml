@@ -1,0 +1,57 @@
+name: Deploy React Frontend
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build React app
+      run: npm run build
+
+    - name: Deploy to server via SSH
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SERVER_PORT }}
+        script: |
+          cd /home/ivan/web/panicafe-front
+          rm -rf build
+          mkdir -p build
+          exit
+
+    - name: Copy build to server
+      uses: appleboy/scp-action@v0.1.6
+      with:
+        source: ./build/*
+        target: ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/ivan/web/panicafe-front/build
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SERVER_PORT }}
+
+    - name: Start frontend
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SERVER_PORT }}
+        script: |
+          cd /ruta/a/tu/frontend
+          serve -s -n build
