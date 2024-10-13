@@ -56,7 +56,7 @@ const MainProduction = () => {
     } else {
       history.push("/main")
     }
-  }, []);
+  }, [history]);
 
   const handleSearch = async () => {
     if (selectedUser && dateFrom && dateTo) {
