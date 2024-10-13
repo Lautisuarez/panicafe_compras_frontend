@@ -16,7 +16,6 @@ import {
   Tr,
   useDisclosure,
 } from "@chakra-ui/react";
-import { base64PaniLogo } from "../assets/PaniLogoBase64";
 import { getOrdersDetail } from "../api/orders";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -74,7 +73,6 @@ export default function PreviewModal({ ordersID, username, dateFrom, dateTo }) {
         doc.setFontSize(10);
         var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
         doc.text(str, data.settings.margin.left, pageHeight  - 10);
-        doc.addImage(base64PaniLogo, 'PNG', 161, pageHeight  - 17, 35, 10);
     };
 
     doc.autoTable({

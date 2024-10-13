@@ -27,7 +27,7 @@ import { getOrdersByUser } from "./api/orders";
 import CountdownTimer from "./components/CountDownTimer";
 import PreviewModal from "./components/PreviewModal";
 import { logout } from "./protected/AuthService";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 
 const MainProduction = () => {
   const [selectedUser, setSelectedUser] = useState("");
@@ -39,6 +39,7 @@ const MainProduction = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isFistTime, setIsFistTime] = useState(true);
   const [redirect, handleRedirect] = React.useState(false);
+  const history = useHistory();
 
   const logoutHandler = () => {
     localStorage.removeItem("timeLeft");
@@ -46,9 +47,14 @@ const MainProduction = () => {
     handleRedirect(true);
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     if (isProduction()) {
-      setUsers(await getUsers());
+      const getUsersProduction = async () => {
+        setUsers(await getUsers());
+      }
+      getUsersProduction();
+    } else {
+      history.push("/main")
     }
   }, []);
 
@@ -72,10 +78,6 @@ const MainProduction = () => {
       }
     });
   };
-
-  const generatePDF = () => {
-
-  }
 
   return redirect ? (
     <Redirect to="/" />

@@ -10,13 +10,15 @@ import HeaderModel from "./components/HeaderModel";
 import TabContainer from "./components/TabContainer";
 import CountdownTimer from "./components/CountDownTimer";
 import { logout } from "./protected/AuthService";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import configData from "./config.json";
+import { isProduction } from "./protected/AuthService";
 
 const Main = () => {
   const [renderReady, handleRender] = React.useState(false);
   const [redirect, handleRedirect] = React.useState(false);
   const [prodList, handleProdList] = React.useState([]);
+  const history = useHistory();
 
   const getProductos = async () => {
     if (prodList !== []) {
@@ -43,6 +45,10 @@ const Main = () => {
   };
 
   React.useEffect(() => {
+    if(isProduction()) {
+      history.push("/mainproduction")
+      return;
+    }
     getProductos();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

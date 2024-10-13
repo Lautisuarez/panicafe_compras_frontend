@@ -16,9 +16,12 @@ const ABM = (props) => {
   const [users, setUsers] = React.useState([]);
 
 
-  React.useEffect(async() => {
-    setUsers(await getUsers());
-    setToken(jwt_decode(localStorage.getItem("token")));
+  React.useEffect(() => {
+    const mountABM = async () => {
+      setUsers(await getUsers());
+      setToken(jwt_decode(localStorage.getItem("token")));
+    }
+    mountABM();
   }, []);
   const logoutHandler = () => {
     logout();
