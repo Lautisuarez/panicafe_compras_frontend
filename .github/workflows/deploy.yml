@@ -21,11 +21,6 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Check if pm2 is installed
-      run: |
-        which pm2
-        pm2 -v
-
     - name: Build React app
       run: npm run build
 
