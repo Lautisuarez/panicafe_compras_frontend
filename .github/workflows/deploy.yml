@@ -13,6 +13,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Add PM2 to PATH
+      run: echo "/usr/local/node-v16.0.0/bin" >> $GITHUB_PATH
+
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
