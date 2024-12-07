@@ -32,7 +32,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SERVER_PORT }}
         script: |
-          cd /home/ivan/web/panicafe-front
+          cd /home/administrador/web/panicafe-front
           rm -rf build
           mkdir -p build
           exit
@@ -45,7 +45,7 @@ jobs:
         port: ${{ secrets.SERVER_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: "build/*"
-        target: "/home/ivan/web/panicafe-front"
+        target: "/home/administrador/web/panicafe-front"
 
     - name: Start Frontend
       uses: appleboy/ssh-action@v0.1.6
@@ -55,6 +55,6 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SERVER_PORT }}
         script: |
-          cd /home/ivan/web/panicafe-front
+          cd /home/administrador/web/panicafe-front
           pm2 delete panicafe-frontend
           pm2 start serve --name panicafe-frontend -- -s build -n
