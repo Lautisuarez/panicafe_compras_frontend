@@ -57,4 +57,4 @@ jobs:
         script: |
           cd /home/administrador/web/panicafe-front
           pm2 delete panicafe-frontend
-          pm2 start serve --name panicafe-frontend -- -s build -n
+          PORT=2525 pm2 start serve --name panicafe-frontend -- -s build -n
