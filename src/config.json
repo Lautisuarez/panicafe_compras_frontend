@@ -1,4 +1,4 @@
 {
-  "SERVER_URL": "http://localhost:3001",
+  "SERVER_URL": "http://intranet01.dyndns.org:3001",
   "ORDERS_URL": "http://192.168.66.2:3001"
 }
