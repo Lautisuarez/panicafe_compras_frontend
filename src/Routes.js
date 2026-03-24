@@ -252,6 +252,7 @@ const Routes = () => {
           <AdminRoute
             path="/abm-productos"
             exact
+            productosPedido
             children={
               <Flex>
                 <VStack

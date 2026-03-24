@@ -18,6 +18,13 @@ export const isAdmin = () => {
   return token.isAdmin === 1 ? true : false;
 };
 
+/** Admin full (users ABM) or productos-pedido-only role (JWT isAdmin 1 or 3). */
+export const isProductosPedidoAdmin = () => {
+  const token = jwt_decode(localStorage.getItem("token"));
+  if (token.isAdmin === null) return null;
+  return token.isAdmin === 1 || token.isAdmin === 3 ? true : false;
+};
+
 export const isProduction = () => {
   const token = jwt_decode(localStorage.getItem("token"));
   if (token.isAdmin === null) return null;

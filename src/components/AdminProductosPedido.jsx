@@ -19,16 +19,14 @@ import { SearchIcon } from "@chakra-ui/icons";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import * as React from "react";
 import { Redirect } from "react-router";
-import { logout } from "../protected/AuthService";
+import { isProductosPedidoAdmin, logout } from "../protected/AuthService";
 import HeaderModel from "./HeaderModel";
-import jwt_decode from "jwt-decode";
 import {
   getProductosAdmin,
   patchArticuloPedidoHabilitado,
 } from "../api/products";
 
 const AdminProductosPedido = () => {
-  const [token, setToken] = React.useState({});
   const [redirect, setRedirect] = React.useState(false);
   const [items, setItems] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -51,7 +49,6 @@ const AdminProductosPedido = () => {
   }, []);
 
   React.useEffect(() => {
-    setToken(jwt_decode(localStorage.getItem("token")));
     loadList();
   }, [loadList]);
 
@@ -107,7 +104,7 @@ const AdminProductosPedido = () => {
     return <Redirect to="/" />;
   }
 
-  if (token.isAdmin !== 1) {
+  if (isProductosPedidoAdmin() !== true) {
     return null;
   }
 
