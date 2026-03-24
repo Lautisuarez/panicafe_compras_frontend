@@ -12,9 +12,8 @@ const AdminABMButton = () => {
         to="/abm"
         bgColor="#ebc699"
         leftIcon={<MdAccountBox />}
-        width="90%"
         maxW="220px"
-        justifyContent="flex-start"
+        justifyContent="center"
       >
         ABM
       </Button>
@@ -23,9 +22,8 @@ const AdminABMButton = () => {
         to="/abm-productos"
         bgColor="#ebc699"
         leftIcon={<MdShoppingBasket />}
-        width="90%"
         maxW="220px"
-        justifyContent="flex-start"
+        justifyContent="center"
       >
         Productos
       </Button>
