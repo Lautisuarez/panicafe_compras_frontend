@@ -1,7 +1,8 @@
 import * as React from "react";
 import {
   Button,
-  Checkbox,
+  FormControl,
+  FormLabel,
   Icon,
   IconButton,
   Modal,
@@ -12,6 +13,7 @@ import {
   ModalOverlay,
   useDisclosure,
   Input,
+  Select,
   Spacer,
   VStack,
   Menu,
@@ -36,7 +38,8 @@ const AbmModal = (props) => {
   const [user, setUser] = React.useState("");
   const [userCreated, setUserCreated] = React.useState(false);
   const [password, setPassword] = React.useState("");
-  const [isAdmin, setIsAdmin] = React.useState(0);
+  /** JWT isAdmin claim sent to /addUser: 0 usuario, 1 admin completo, 3 solo catálogo productos pedido */
+  const [userRole, setUserRole] = React.useState(0);
   const [nombre, setNombre] = React.useState("");
   const [email, setEmail] = React.useState("");
   const IconoCarrito = () => {
@@ -54,14 +57,21 @@ const AbmModal = (props) => {
     setInfoAddUser(await response.json());
   };
 
-  const handleAPICall = async (usuario, password, isAdmin, nombre, email) => {
+  const handleAPICall = async (usuario, password, role, nombre, email) => {
     const response = await fetch(configData.SERVER_URL + "/addUser", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify({ id, isAdmin, usuario, password, nombre, email }),
+      body: JSON.stringify({
+        id,
+        isAdmin: role,
+        usuario,
+        password,
+        nombre,
+        email,
+      }),
     });
     console.log(response);
     if (response.status === 201) {
@@ -74,6 +84,7 @@ const AbmModal = (props) => {
     onClose();
 
     setUserCreated(false);
+    setUserRole(0);
   };
 
   const validateEmail = (email) => {
@@ -110,6 +121,7 @@ const AbmModal = (props) => {
         m="5px"
         onClick={() => {
           getInfoAddUser();
+          setUserRole(0);
           onOpen();
         }}
       />
@@ -190,9 +202,20 @@ const AbmModal = (props) => {
                     </>
                   )}
                 </Menu>
-                <Checkbox onChange={() => setIsAdmin(1)}>
-                  Administrador
-                </Checkbox>
+                <FormControl>
+                  <FormLabel mb={1}>Rol</FormLabel>
+                  <Select
+                    value={String(userRole)}
+                    onChange={(e) => setUserRole(Number(e.target.value))}
+                    bg="white"
+                  >
+                    <option value="0">Usuario</option>
+                    <option value="1">Administrador</option>
+                    <option value="3">
+                      Administrador de catálogo (productos pedido)
+                    </option>
+                  </Select>
+                </FormControl>
               </VStack>
             </ModalBody>
 
@@ -200,7 +223,7 @@ const AbmModal = (props) => {
               <Button
                 colorScheme="whatsapp"
                 onClick={() =>
-                  handleAPICall(user, password, isAdmin, nombre, email)
+                  handleAPICall(user, password, userRole, nombre, email)
                 }
                 isDisabled={isValidated}
               >
