@@ -3,13 +3,19 @@ import {
   CircularProgress,
   Container,
   Flex,
+  FormControl,
+  FormLabel,
   HStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Spacer,
   Switch,
   Text,
   VStack,
   useToast,
 } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import * as React from "react";
 import { Redirect } from "react-router";
@@ -28,6 +34,7 @@ const AdminProductosPedido = () => {
   const [loading, setLoading] = React.useState(true);
   const [loadError, setLoadError] = React.useState("");
   const [pendingId, setPendingId] = React.useState(null);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const toast = useToast();
 
   const loadList = React.useCallback(async () => {
@@ -83,6 +90,19 @@ const AdminProductosPedido = () => {
     await loadList();
   };
 
+  const filteredItems = React.useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter((row) => {
+      const desc = String(row.descripcion ?? "").toLowerCase();
+      const rubro = String(row.rubro ?? "").toLowerCase();
+      const idStr = String(row.id ?? "");
+      return (
+        desc.includes(q) || rubro.includes(q) || idStr.includes(q)
+      );
+    });
+  }, [items, searchQuery]);
+
   if (redirect) {
     return <Redirect to="/" />;
   }
@@ -94,13 +114,32 @@ const AdminProductosPedido = () => {
   return (
     <Container paddingLeft="150px">
       <HStack>
-        <HeaderModel text="Productos — pedido de compras" />
+        <HeaderModel text="Catalogo de Productos" />
         <Spacer />
         <Button p="20px" onClick={logoutHandler}>
           Desconectarse
         </Button>
       </HStack>
       <VStack align="stretch" spacing={4} mt={4}>
+        {!loading && !loadError && items.length > 0 && (
+          <FormControl maxW="md">
+            <FormLabel htmlFor="admin-productos-buscar" mb={1}>
+              Buscar
+            </FormLabel>
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <SearchIcon color="gray.400" />
+              </InputLeftElement>
+              <Input
+                id="admin-productos-buscar"
+                placeholder="Artículo, rubro o código…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                bg="white"
+              />
+            </InputGroup>
+          </FormControl>
+        )}
         {loading ? (
           <Flex justify="center" py={10}>
             <CircularProgress
@@ -116,18 +155,21 @@ const AdminProductosPedido = () => {
             <Thead>
               <Tr>
                 <Th>Artículo</Th>
-                <Th isNumeric>Precio</Th>
                 <Th>Rubro</Th>
                 <Th>Habilitado para pedido</Th>
               </Tr>
             </Thead>
             <Tbody>
-              {items.length === 0 ? (
+              {filteredItems.length === 0 ? (
                 <Tr>
-                  <Td colSpan={4}>No hay artículos</Td>
+                  <Td colSpan={4}>
+                    {items.length === 0
+                      ? "No hay artículos"
+                      : "Ningún artículo coincide con la búsqueda"}
+                  </Td>
                 </Tr>
               ) : (
-                items.map((row) => (
+                filteredItems.map((row) => (
                   <Tr key={row.id}>
                     <Td>
                       {typeof row.descripcion === "string" &&
@@ -135,7 +177,6 @@ const AdminProductosPedido = () => {
                         ? row.descripcion.trim()
                         : `(Sin descripción — código ${row.id})`}
                     </Td>
-                    <Td isNumeric>${Number(row.precio).toFixed(2)}</Td>
                     <Td>{row.rubro ?? ""}</Td>
                     <Td>
                       <Switch

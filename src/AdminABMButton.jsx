@@ -1,27 +1,33 @@
 import { Button } from "@chakra-ui/button";
 import { VStack } from "@chakra-ui/layout";
 import { MdAccountBox, MdShoppingBasket } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { isAdmin } from "./protected/AuthService";
 
 const AdminABMButton = () => {
   return isAdmin() ? (
-    <VStack spacing={2} width="100%">
+    <VStack spacing={3} width="100%" align="center" py={2}>
       <Button
+        as={RouterLink}
+        to="/abm"
         bgColor="#ebc699"
         leftIcon={<MdAccountBox />}
-        m="10px"
         width="90%"
+        maxW="220px"
+        justifyContent="flex-start"
       >
-        <Link to="/abm">ABM</Link>
+        ABM
       </Button>
       <Button
+        as={RouterLink}
+        to="/abm-productos"
         bgColor="#ebc699"
         leftIcon={<MdShoppingBasket />}
-        m="10px"
         width="90%"
+        maxW="220px"
+        justifyContent="flex-start"
       >
-        <Link to="/abm-productos">Productos pedido</Link>
+        Productos
       </Button>
     </VStack>
   ) : null;
