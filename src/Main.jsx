@@ -11,8 +11,8 @@ import TabContainer from "./components/TabContainer";
 import CountdownTimer from "./components/CountDownTimer";
 import { logout } from "./protected/AuthService";
 import { Redirect, useHistory } from "react-router-dom";
-import configData from "./config.json";
 import { isProduction } from "./protected/AuthService";
+import { fetchProductosCatalogo } from "./api/products";
 
 const Main = () => {
   const [renderReady, handleRender] = React.useState(false);
@@ -20,23 +20,19 @@ const Main = () => {
   const [prodList, handleProdList] = React.useState([]);
   const history = useHistory();
 
-  const getProductos = async () => {
-    if (prodList !== []) {
-      fetch(configData.SERVER_URL + "/productos", {
-        headers: new Headers({
-          Authorization: "Bearer " + localStorage.getItem("token"),
-          "Content-Type": "application/json",
-        }),
-      })
-        .then((response) => response.json())
-        .then((res) => {
-          res.map((prod) => (prod.show = true));
-          handleProdList(res);
-        })
-        .then(() => handleRender(true))
-        .catch((error) => console.error(error));
+  const loadProductos = React.useCallback(async () => {
+    try {
+      const res = await fetchProductosCatalogo();
+      res.forEach((prod) => {
+        prod.show = true;
+      });
+      handleProdList(res);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      handleRender(true);
     }
-  };
+  }, []);
 
   const logoutHandler = () => {
     localStorage.removeItem('timeLeft');
@@ -49,9 +45,8 @@ const Main = () => {
       history.push("/mainproduction")
       return;
     }
-    getProductos();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    loadProductos();
+  }, [history, loadProductos]);
 
   return redirect ? (
     <Redirect to="/" />
@@ -69,6 +64,7 @@ const Main = () => {
           logout={logoutHandler}
           ready={renderReady}
           prodList={prodList}
+          onRefreshCatalog={loadProductos}
         />
       </Container>
     </Box>

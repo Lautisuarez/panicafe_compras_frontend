@@ -13,6 +13,28 @@ import ProdModal from "./ProdModal";
 import Searchbar from "./Searchbar";
 import configData from "../config.json";
 
+const mergeCatalogWithCart = (serverList, prevList) => {
+  const qtyById = new Map();
+  for (const p of prevList) {
+    if (
+      p &&
+      p.id != null &&
+      p.cantidad != null &&
+      p.cantidad !== undefined &&
+      Number(p.cantidad) !== 0
+    ) {
+      qtyById.set(p.id, p.cantidad);
+    }
+  }
+  return serverList.map((prod) => {
+    const next = { ...prod, show: true };
+    if (qtyById.has(prod.id)) {
+      next.cantidad = qtyById.get(prod.id);
+    }
+    return next;
+  });
+};
+
 const TabContainer = (props) => {
   const [searchList, handleSearchList] = React.useState([]);
   const [rubroList, handleRubroList] = React.useState([]);
@@ -39,9 +61,11 @@ const TabContainer = (props) => {
 
   React.useEffect(() => {
     getRubros();
-    handleProdList(props.prodList);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  React.useEffect(() => {
+    handleProdList((prev) => mergeCatalogWithCart(props.prodList, prev));
+  }, [props.prodList]);
 
   const filterByRubro = (rubro) => {
     if (rubro === "Todos") {
@@ -77,7 +101,11 @@ const TabContainer = (props) => {
             No hay rubros disponibles
           </Tab>}
           <Spacer />
-          <ProdModal prodList={prodList} logout={props.logout} />
+          <ProdModal
+            prodList={prodList}
+            logout={props.logout}
+            onRefreshCatalog={props.onRefreshCatalog}
+          />
         </TabList>
 
         <TabPanels>

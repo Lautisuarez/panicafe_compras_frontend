@@ -1,5 +1,11 @@
 import * as React from "react";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Button,
   Icon,
   IconButton,
@@ -16,6 +22,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
 import configData from "../config.json";
@@ -24,6 +31,10 @@ import jwt_decode from "jwt-decode";
 const ProdModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [sent, handleSent] = React.useState(false);
+  const [orderErrorOpen, setOrderErrorOpen] = React.useState(false);
+  const [orderErrorMessage, setOrderErrorMessage] = React.useState("");
+  const toast = useToast();
+  const cancelRef = React.useRef();
 
   const IconoCarrito = () => {
     return <Icon as={FiShoppingCart} />;
@@ -35,7 +46,7 @@ const ProdModal = (props) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
-  const handleAPICall = async (bd) => {
+  const postPedido = async (bd) => {
     const response = await fetch(configData.SERVER_URL + "/pedidos", {
       method: "POST",
       headers: {
@@ -44,17 +55,35 @@ const ProdModal = (props) => {
       },
       body: JSON.stringify(bd),
     });
-    if (response.status !== 201) {
-      alert("error");
-    }
-    if (response.status === 201) {
-      handleSent(true);
+    const data = await response.json().catch(() => ({}));
+    return { status: response.status, data };
+  };
+
+  const handleRefreshCatalogAfterError = async () => {
+    setOrderErrorOpen(false);
+    if (typeof props.onRefreshCatalog === "function") {
+      try {
+        await props.onRefreshCatalog();
+        toast({
+          title: "Catálogo actualizado",
+          description:
+            "El carrito se alineó con los productos habilitados para pedido.",
+          status: "success",
+          duration: 4000,
+          isClosable: true,
+        });
+      } catch (e) {
+        toast({
+          title: "No se pudo actualizar el catálogo",
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+      }
     }
   };
 
   const sendPedido = async () => {
-    // Definiendo Date
-
     const t = new Date();
     const z = t.getTimezoneOffset() * 60 * 1000;
     let tLocal = t - z;
@@ -63,7 +92,6 @@ const ProdModal = (props) => {
     date = date.slice(0, 19);
     date = date.replace("T", " ");
 
-    // Armando objeto pedido
     const pedido = {
       precioTotal: totalPedido,
       idCliente: jwt_decode(localStorage.getItem("token")).id,
@@ -71,21 +99,93 @@ const ProdModal = (props) => {
       productos: props.prodList,
     };
 
-    // Enviando pedido
     try {
       const prodFiltrado = pedido.productos.filter(
-        (item) => item.hasOwnProperty("cantidad") && item.cantidad !== 0 && item.cantidad !== undefined
+        (item) =>
+          item.hasOwnProperty("cantidad") &&
+          item.cantidad !== 0 &&
+          item.cantidad !== undefined
       );
       const pedidoFiltrado = { ...pedido, productos: prodFiltrado };
-      handleAPICall(pedidoFiltrado);
+      const { status, data } = await postPedido(pedidoFiltrado);
+
+      if (status === 201) {
+        handleSent(true);
+        return;
+      }
+
+      const serverMsg =
+        data.mensaje ||
+        data.message ||
+        "No se pudo completar el pedido. Intente nuevamente.";
+
+      if (status === 400) {
+        setOrderErrorMessage(serverMsg);
+        setOrderErrorOpen(true);
+        toast({
+          title: "Pedido rechazado",
+          description: serverMsg,
+          status: "warning",
+          duration: 6000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      toast({
+        title: "Error al enviar el pedido",
+        description: serverMsg,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error) {
-      alert(`Parece que ha habido un error. ${error}`);
+      toast({
+        title: "Error de red",
+        description: String(error),
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <>
       <IconButton icon={<IconoCarrito />} m="5px" onClick={onOpen} />
+
+      <AlertDialog
+        isOpen={orderErrorOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setOrderErrorOpen(false)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Productos no habilitados
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              {orderErrorMessage}
+              <br />
+              <br />
+              Puede actualizar el catálogo para quitar del carrito los artículos
+              que ya no están permitidos.
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setOrderErrorOpen(false)}>
+                Cerrar
+              </Button>
+              <Button
+                colorScheme="blue"
+                onClick={handleRefreshCatalogAfterError}
+                ml={3}
+              >
+                Actualizar catálogo y carrito
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
 
       <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
         <ModalOverlay />

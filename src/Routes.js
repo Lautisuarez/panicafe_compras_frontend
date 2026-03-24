@@ -16,6 +16,7 @@ import { extendTheme } from "@chakra-ui/react";
 import Fonts from "./Fonts";
 import ProtectedRoute from "./protected/ProtectedRoute";
 import ABM from "./components/ABM";
+import AdminProductosPedido from "./components/AdminProductosPedido";
 import AdminRoute from "./protected/AdminRoute";
 import ProductionRoute from "./protected/ProductionRoute";
 import AdminABMButton from "./AdminABMButton";
@@ -225,6 +226,40 @@ const Routes = () => {
                 <ChakraProvider theme={theme}>
                   <Fonts />
                   <ABM />
+                </ChakraProvider>
+              </Flex>
+            }
+          />
+          <AdminRoute
+            path="/abm-productos"
+            exact
+            children={
+              <Flex>
+                <VStack
+                  bgColor="#f7d4ab"
+                  z-index="1"
+                  position="fixed"
+                  top="0"
+                  left="0"
+                  h="100%"
+                >
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdHome />}
+                      m="20px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/main">Inicio</Link>
+                    </Button>
+                  </Center>
+                  <Center>
+                    <AdminABMButton />
+                  </Center>
+                </VStack>
+                <ChakraProvider theme={theme}>
+                  <Fonts />
+                  <AdminProductosPedido />
                 </ChakraProvider>
               </Flex>
             }
