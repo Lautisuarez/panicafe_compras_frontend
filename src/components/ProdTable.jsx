@@ -1,7 +1,15 @@
 import * as React from "react";
-import { Box, HStack, IconButton, Input } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  IconButton,
+  Input,
+  Text,
+  Tooltip,
+} from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import { ArrowRightIcon, CloseIcon } from "@chakra-ui/icons";
+import { productAllowsPedidoCompras } from "../utils/productOrder";
 
 const ProdTable = (props) => {
   const [cart, handleCart] = React.useState([]);
@@ -18,7 +26,14 @@ const ProdTable = (props) => {
     return arr.findIndex((e) => e.descripcion === item);
   };
 
-  const handleProd = (product, precio, id, rubro, quantity) => {
+  const handleProd = (producto, quantity) => {
+    if (!productAllowsPedidoCompras(producto)) return;
+
+    const product = producto.descripcion;
+    const precio = producto.precio;
+    const id = producto.id;
+    const rubro = producto.rubro;
+
     if (quantity === undefined) {
       const itemIndex = getItemIndex(cart, product);
       const prodObj = {
@@ -27,6 +42,7 @@ const ProdTable = (props) => {
         precio: precio,
         rubro: rubro,
         show: true,
+        permitePedidoCompras: producto.permitePedidoCompras,
       };
       props.handleQuantity(prodObj);
       const newArr = [...cart];
@@ -41,6 +57,7 @@ const ProdTable = (props) => {
         precio: precio,
         rubro: rubro,
         show: true,
+        permitePedidoCompras: producto.permitePedidoCompras,
       };
       props.handleQuantity(prodObj);
       if (itemIndex === -1) {
@@ -58,7 +75,12 @@ const ProdTable = (props) => {
   };
 
   const hasValidProperty = (obj, prop) => {
-    return obj.hasOwnProperty(prop) && obj[prop] !== null && obj[prop] !== undefined && obj[prop] !== '';
+    return (
+      obj.hasOwnProperty(prop) &&
+      obj[prop] !== null &&
+      obj[prop] !== undefined &&
+      obj[prop] !== ""
+    );
   };
 
   React.useEffect(() => {
@@ -78,73 +100,100 @@ const ProdTable = (props) => {
           </Tr>
         </Thead>
         <Tbody>
-          {props.ready && props.prodList.length > 0
-            ? cart.map((producto, index) => {
-                const handleChange = (e, index) => {
-                  let newArr = values;
-                  newArr[index] = { value: e.target.value };
-                  handleValues(newArr);
-                };
+          {props.ready && props.prodList.length > 0 ? (
+            cart.map((producto, index) => {
+              const handleChange = (e, index) => {
+                let newArr = values;
+                newArr[index] = { value: e.target.value };
+                handleValues(newArr);
+              };
 
-                return producto.show ? (
-                  <Tr
-                    key={producto.id}
-                    bgColor={hasValidProperty(producto, 'cantidad') ? "gainsboro" : "white"}
-                  >
-                    <Td>
-                      <Input
-                        data-key={index}
-                        placeholder="0"
-                        onChange={(event) => handleChange(event, index)}
-                        type="number"
-                      />
-                    </Td>
-                    <Td>
-                      <HStack>
-                        {hasValidProperty(producto, 'cantidad') ? (
-                          <IconButton
-                            aria-label="Remover"
-                            colorScheme="red"
-                            icon={<CloseIcon />}
-                            onClick={() => {
-                              handleProd(
-                                producto.descripcion,
-                                producto.precio,
-                                producto.id,
-                                producto.rubro
-                              );
-                            }}
-                          />
-                        ) : null}
+              const canOrder = productAllowsPedidoCompras(producto);
+
+              return producto.show ? (
+                <Tr
+                  key={producto.id}
+                  bgColor={
+                    !canOrder
+                      ? "gray.100"
+                      : hasValidProperty(producto, "cantidad")
+                      ? "gainsboro"
+                      : "white"
+                  }
+                  color={!canOrder ? "gray.600" : undefined}
+                  title={
+                    !canOrder
+                      ? "Este producto no está disponible para pedido en este momento"
+                      : undefined
+                  }
+                >
+                  <Td>
+                    <Input
+                      data-key={index}
+                      placeholder="0"
+                      onChange={(event) => handleChange(event, index)}
+                      type="number"
+                      isDisabled={!canOrder}
+                      opacity={!canOrder ? 0.7 : 1}
+                    />
+                  </Td>
+                  <Td>
+                    <HStack>
+                      {hasValidProperty(producto, "cantidad") && canOrder ? (
                         <IconButton
-                          aria-label="Añadir"
-                          colorScheme="whatsapp"
-                          icon={<ArrowRightIcon />}
+                          aria-label="Remover"
+                          colorScheme="red"
+                          icon={<CloseIcon />}
                           onClick={() => {
-                            values[index]?.value > 0
-                              ? handleProd(
-                                  producto.descripcion,
-                                  producto.precio,
-                                  producto.id,
-                                  producto.rubro,
-                                  values[index].value
-                                )
-                              : console.error("Error de añadido.");
+                            handleProd(producto);
                           }}
                         />
-                      </HStack>
-                    </Td>
-                    <Td>{producto.cantidad ? producto.cantidad : null}</Td>
-                    <Td w="100%">
+                      ) : null}
+                      <Tooltip
+                        label="No disponible para pedido"
+                        isDisabled={canOrder}
+                        placement="top"
+                      >
+                        <Box display="inline-block">
+                          <IconButton
+                            aria-label="Añadir"
+                            colorScheme="whatsapp"
+                            icon={<ArrowRightIcon />}
+                            isDisabled={!canOrder}
+                            onClick={() => {
+                              if (!canOrder) return;
+                              values[index]?.value > 0
+                                ? handleProd(
+                                    producto,
+                                    values[index].value
+                                  )
+                                : console.error("Error de añadido.");
+                            }}
+                          />
+                        </Box>
+                      </Tooltip>
+                    </HStack>
+                  </Td>
+                  <Td>{producto.cantidad ? producto.cantidad : null}</Td>
+                  <Td w="100%">
+                    <Text as="span" fontWeight={!canOrder ? "medium" : "normal"}>
                       {capitalizeFirstLetter(producto.descripcion)}
-                    </Td>
-                    <Td isNumeric>${producto.precio}</Td>
-                  </Tr>
-                ) : null;
-              })
-            : <Tr>
-                <Td>No hay productos disponibles para este rubro</Td>
-              </Tr>}
+                    </Text>
+                    {!canOrder ? (
+                      <Text fontSize="xs" color="gray.500" mt={1}>
+                        No disponible para pedido
+                      </Text>
+                    ) : null}
+                  </Td>
+                  <Td isNumeric>${producto.precio}</Td>
+                </Tr>
+              ) : null;
+            })
+          ) : (
+            <Tr>
+              <Td>No hay productos disponibles para este rubro</Td>
+            </Tr>
+          )}
         </Tbody>
       </Table>
     </Box>

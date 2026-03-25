@@ -16,7 +16,8 @@ const parseJsonSafe = async (response) => {
 };
 
 /**
- * Catalog for order flow (GET /productos). Server filters eligible articles.
+ * Catalog for order flow (GET /productos). May include all articles with
+ * permitePedidoCompras / PERMITEPEDIDOCOMPRAS; UI must block ordering when false.
  */
 export const fetchProductosCatalogo = async () => {
   const response = await fetch(`${configData.SERVER_URL}/productos`, {

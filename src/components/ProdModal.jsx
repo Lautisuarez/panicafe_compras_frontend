@@ -27,6 +27,7 @@ import {
 import { FiShoppingCart } from "react-icons/fi";
 import configData from "../config.json";
 import jwt_decode from "jwt-decode";
+import { productAllowsPedidoCompras } from "../utils/productOrder";
 
 const ProdModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -102,6 +103,7 @@ const ProdModal = (props) => {
     try {
       const prodFiltrado = pedido.productos.filter(
         (item) =>
+          productAllowsPedidoCompras(item) &&
           item.hasOwnProperty("cantidad") &&
           item.cantidad !== 0 &&
           item.cantidad !== undefined

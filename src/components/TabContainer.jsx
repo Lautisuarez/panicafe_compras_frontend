@@ -12,6 +12,7 @@ import ProdTable from "./ProdTable";
 import ProdModal from "./ProdModal";
 import Searchbar from "./Searchbar";
 import configData from "../config.json";
+import { productAllowsPedidoCompras } from "../utils/productOrder";
 
 const mergeCatalogWithCart = (serverList, prevList) => {
   const qtyById = new Map();
@@ -27,8 +28,9 @@ const mergeCatalogWithCart = (serverList, prevList) => {
     }
   }
   return serverList.map((prod) => {
+    const allows = productAllowsPedidoCompras(prod);
     const next = { ...prod, show: true };
-    if (qtyById.has(prod.id)) {
+    if (allows && qtyById.has(prod.id)) {
       next.cantidad = qtyById.get(prod.id);
     }
     return next;

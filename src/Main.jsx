@@ -13,6 +13,7 @@ import { logout } from "./protected/AuthService";
 import { Redirect, useHistory } from "react-router-dom";
 import { isProduction } from "./protected/AuthService";
 import { fetchProductosCatalogo } from "./api/products";
+import { productAllowsPedidoCompras } from "./utils/productOrder";
 
 const Main = () => {
   const [renderReady, handleRender] = React.useState(false);
@@ -25,6 +26,7 @@ const Main = () => {
       const res = await fetchProductosCatalogo();
       res.forEach((prod) => {
         prod.show = true;
+        prod.permitePedidoCompras = productAllowsPedidoCompras(prod);
       });
       handleProdList(res);
     } catch (error) {
