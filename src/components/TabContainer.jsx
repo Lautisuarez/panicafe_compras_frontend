@@ -90,7 +90,7 @@ const TabContainer = (props) => {
 
   return (
     <VStack mt="15px">
-      <Searchbar {...props} callback={searchProdList} />
+      <Searchbar prodList={prodList} callback={searchProdList} />
       <Tabs>
         <TabList>
           {rubroList.length > 0 ?
