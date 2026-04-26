@@ -9,7 +9,7 @@ import {
 import HeaderModel from "./components/HeaderModel";
 import TabContainer from "./components/TabContainer";
 import CountdownTimer from "./components/CountDownTimer";
-import { logout, isProduction } from "./protected/AuthService";
+import { logout, isProduction, SESSION_TIMER_CAP_MINUTES } from "./protected/AuthService";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchProductosCatalogo } from "./api/products";
 import { productAllowsPedidoCompras } from "./utils/productOrder";
@@ -61,7 +61,7 @@ const Main = () => {
         paddingRight="30px"
         marginTop="20px"
       >
-        <CountdownTimer initialMinutes={20} logoutFunction={logoutHandler} />
+        <CountdownTimer initialMinutes={SESSION_TIMER_CAP_MINUTES} logoutFunction={logoutHandler} />
         <HeaderModel text="Productos" />
         <Button p="20px" onClick={logoutHandler}>
           Desconectarse

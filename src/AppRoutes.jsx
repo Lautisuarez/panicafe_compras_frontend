@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Center, Flex, VStack, Image, Box } from "@chakra-ui/react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { MdHome } from "react-icons/md";
-import Main from "./Main";
+import Main from "./main";
 import Login from "./Login";
 import ProtectedRoute from "./protected/ProtectedRoute";
 import ABM from "./components/ABM";
@@ -14,10 +14,24 @@ import AdminABMButton from "./AdminABMButton";
 import PedModal from "./components/PedModal";
 import configData from "./config.json";
 import MainProduction from "./MainProduction";
+import { isTokenExpired, logout } from "./protected/AuthService";
 
 export default function AppRoutes() {
   const [pedidosDate, handlePedidosDate] = useState([]);
   const [mostrarBoton, handleMostrarBoton] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      if (!localStorage.getItem("auth")) return;
+      if (isTokenExpired()) {
+        localStorage.removeItem("timeLeft");
+        logout();
+        navigate("/", { replace: true });
+      }
+    }, 5000);
+    return () => clearInterval(t);
+  }, [navigate]);
 
   const getPedidosDate = async () => {
     fetch(configData.SERVER_URL + "/mispedidos", {

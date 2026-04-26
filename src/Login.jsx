@@ -2,7 +2,11 @@ import { Button, Center, Image, Input, Spacer, VStack } from "@chakra-ui/react";
 import * as React from "react";
 import PasswordInput from "./components/PasswordInput";
 import { Navigate } from "react-router-dom";
-import { isProduction, login as persistAuthSession } from "./protected/AuthService";
+import {
+  isProduction,
+  login as persistAuthSession,
+  setSessionTimeLeftForNewToken,
+} from "./protected/AuthService";
 
 import configData from "./config.json";
 
@@ -42,6 +46,7 @@ const Login = (props) => {
       const data = await response.json();
       const token = data.token;
       localStorage.setItem("token", token);
+      setSessionTimeLeftForNewToken(token);
       localStorage.setItem("pedidos", true);
       persistAuthSession();
       props.onSuccesLogin(true);

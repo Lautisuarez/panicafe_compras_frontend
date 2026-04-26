@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text } from '@chakra-ui/react';
+import { isTokenExpired } from '../protected/AuthService';
 
 const CountdownTimer = ({ initialMinutes, logoutFunction }) => {
   const storedTime = localStorage.getItem('timeLeft');
@@ -9,6 +10,10 @@ const CountdownTimer = ({ initialMinutes, logoutFunction }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
+      if (isTokenExpired()) {
+        logoutFunction();
+        return;
+      }
       setTimeLeft((prevTime) => {
         const newTime = prevTime - 1;
         localStorage.setItem('timeLeft', newTime);

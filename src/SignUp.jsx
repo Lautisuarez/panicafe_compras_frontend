@@ -3,7 +3,10 @@ import * as React from "react";
 import PasswordInput from "./components/PasswordInput";
 import { Navigate } from "react-router-dom";
 import configData from "./config.json";
-import { login as persistAuthSession } from "./protected/AuthService";
+import {
+  login as persistAuthSession,
+  setSessionTimeLeftForNewToken,
+} from "./protected/AuthService";
 
 const Signup = () => {
   const [response, handleResponse] = React.useState(false);
@@ -29,6 +32,7 @@ const Signup = () => {
       const token = data.token;
       if (token) {
         localStorage.setItem("token", token);
+        setSessionTimeLeftForNewToken(token);
         persistAuthSession();
       }
       return handleResponse(true);

@@ -26,7 +26,7 @@ import { getUsers } from "./api/users";
 import { getOrdersByUser } from "./api/orders";
 import CountdownTimer from "./components/CountDownTimer";
 import PreviewModal from "./components/PreviewModal";
-import { logout } from "./protected/AuthService";
+import { logout, SESSION_TIMER_CAP_MINUTES } from "./protected/AuthService";
 import { Navigate, useNavigate } from "react-router-dom";
 
 const MainProduction = () => {
@@ -91,7 +91,7 @@ const MainProduction = () => {
         paddingRight="30px"
         marginTop="20px"
       >
-        <CountdownTimer initialMinutes={20} logoutFunction={logoutHandler} />
+        <CountdownTimer initialMinutes={SESSION_TIMER_CAP_MINUTES} logoutFunction={logoutHandler} />
         <HeaderModel text="Productos" />
         <Button p="20px" onClick={logoutHandler}>
           Desconectarse
