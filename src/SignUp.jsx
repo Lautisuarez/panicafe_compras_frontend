@@ -1,4 +1,12 @@
-import { Button, Center, Image, Input, Spacer, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  Center,
+  Image,
+  Input,
+  Spacer,
+  useToast,
+  VStack,
+} from "@chakra-ui/react";
 import * as React from "react";
 import PasswordInput from "./components/PasswordInput";
 import { Navigate } from "react-router-dom";
@@ -9,6 +17,7 @@ import {
 } from "./protected/AuthService";
 
 const Signup = () => {
+  const toast = useToast();
   const [response, handleResponse] = React.useState(false);
   const [user, setUser] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -18,29 +27,54 @@ const Signup = () => {
     handleResponse(false);
   };
   const signUp = async () => {
-    const response = await fetch(configData.SERVER_URL + "/adduser", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ usuario: user, pass: password }),
-    });
+    try {
+      const tokenHeader = localStorage.getItem("token");
+      const response = await fetch(configData.SERVER_URL + "/adduser", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          ...(tokenHeader ? { Authorization: `Bearer ${tokenHeader}` } : {}),
+        },
+        body: JSON.stringify({ usuario: user, pass: password }),
+      });
 
-    if (response.status === 200) {
-      const data = await response.json();
-      const token = data.token;
-      if (token) {
-        localStorage.setItem("token", token);
-        setSessionTimeLeftForNewToken(token);
-        persistAuthSession();
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
       }
-      return handleResponse(true);
-    }
-    else if (response.status === 404) {
-      return alert("Error usuario inexistente");
-    } else if (response.status === 401) {
-      return alert("Contraseña Incorrecta");
+
+      if (response.status === 201) {
+        const token = typeof data === "object" && data?.token;
+        if (token) {
+          localStorage.setItem("token", token);
+          setSessionTimeLeftForNewToken(token);
+          persistAuthSession();
+        }
+        return handleResponse(true);
+      }
+
+      const msg =
+        typeof data === "string"
+          ? data
+          : data?.mensaje ||
+            "No se pudo crear el usuario. Verificá los datos o si el usuario ya existe.";
+      toast({
+        title: msg,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch {
+      toast({
+        title: "Error de conexión",
+        description: "No se pudo contactar al servidor.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 

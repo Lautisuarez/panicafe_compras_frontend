@@ -1,4 +1,10 @@
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
   Button,
   ButtonGroup,
@@ -43,6 +49,13 @@ const ABM = () => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const { isOpen: isUserModalOpen, onOpen: onUserModalOpen, onClose: onUserModalClose } =
     useDisclosure();
+  const {
+    isOpen: isDeleteDialogOpen,
+    onOpen: onDeleteDialogOpen,
+    onClose: onDeleteDialogClose,
+  } = useDisclosure();
+  const [userToDelete, setUserToDelete] = React.useState(null);
+  const deleteCancelRef = React.useRef();
 
   const refreshUsers = React.useCallback(async () => {
     const list = await getUsers();
@@ -80,12 +93,23 @@ const ABM = () => {
     handleRedirect(true);
   };
 
-  const confirmation = async (usuario) => {
-    const result = window.confirm("¿Está seguro de que desea eliminar este usuario?");
-    if (result) {
-      await deleteUser(usuario);
+  const requestDeleteUser = (usuario) => {
+    setUserToDelete(usuario);
+    onDeleteDialogOpen();
+  };
+
+  const handleDeleteUserConfirm = async () => {
+    if (userToDelete) {
+      await deleteUser(userToDelete);
       await refreshUsers();
     }
+    setUserToDelete(null);
+    onDeleteDialogClose();
+  };
+
+  const handleDeleteUserCancel = () => {
+    setUserToDelete(null);
+    onDeleteDialogClose();
   };
 
   const openUserDetail = (user, edit) => {
@@ -254,7 +278,7 @@ const ABM = () => {
                                 icon={<DeleteIcon />}
                                 colorScheme="red"
                                 variant="solid"
-                                onClick={() => confirmation(row.usuario)}
+                                onClick={() => requestDeleteUser(row.usuario)}
                               />
                             </Tooltip>
                           </ButtonGroup>
@@ -280,6 +304,36 @@ const ABM = () => {
         onSaved={refreshUsers}
         startInEditMode={startInEditMode}
       />
+
+      <AlertDialog
+        isOpen={isDeleteDialogOpen}
+        leastDestructiveRef={deleteCancelRef}
+        onClose={handleDeleteUserCancel}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Eliminar usuario
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              ¿Está seguro de que desea eliminar este usuario?
+              {userToDelete ? (
+                <Text mt={2} fontWeight="medium">
+                  {userToDelete}
+                </Text>
+              ) : null}
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={deleteCancelRef} onClick={handleDeleteUserCancel}>
+                Cancelar
+              </Button>
+              <Button colorScheme="red" onClick={handleDeleteUserConfirm} ml={3}>
+                Eliminar
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   ) : null;
 };
