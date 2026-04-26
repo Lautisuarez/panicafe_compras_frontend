@@ -1,4 +1,12 @@
-import { Button, Center, Image, Input, Spacer, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  Center,
+  Image,
+  Input,
+  Spacer,
+  useToast,
+  VStack,
+} from "@chakra-ui/react";
 import * as React from "react";
 import PasswordInput from "./components/PasswordInput";
 import { Navigate } from "react-router-dom";
@@ -11,6 +19,7 @@ import {
 import configData from "./config.json";
 
 const Login = (props) => {
+  const toast = useToast();
   const [response, handleResponse] = React.useState(false);
   const [user, setUser] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -51,10 +60,13 @@ const Login = (props) => {
       persistAuthSession();
       props.onSuccesLogin(true);
       return handleResponse(true);
-    } else if (response.status === 404) {
-      return alert("Error usuario inexistente");
     } else if (response.status === 401) {
-      return alert("Contraseña Incorrecta");
+      toast({
+        title: "Usuario o contraseña incorrectos",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
     }
   };
 
