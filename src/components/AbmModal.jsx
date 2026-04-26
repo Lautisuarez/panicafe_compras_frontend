@@ -73,7 +73,6 @@ const AbmModal = (props) => {
         email,
       }),
     });
-    console.log(response);
     if (response.status === 201) {
       setUserCreated(true);
     }

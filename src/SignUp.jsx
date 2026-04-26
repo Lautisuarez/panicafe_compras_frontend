@@ -1,9 +1,9 @@
 import { Button, Center, Image, Input, Spacer, VStack } from "@chakra-ui/react";
 import * as React from "react";
 import PasswordInput from "./components/PasswordInput";
-import HeaderModel from "./components/HeaderModel";
-import { login } from "./protected/AuthService";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import configData from "./config.json";
+import { login as persistAuthSession } from "./protected/AuthService";
 
 const Signup = () => {
   const [response, handleResponse] = React.useState(false);
@@ -27,10 +27,12 @@ const Signup = () => {
     if (response.status === 200) {
       const data = await response.json();
       const token = data.token;
-      //guardar token en localstorage (sessionstorage se cierra siempre, re molesto)
+      if (token) {
+        localStorage.setItem("token", token);
+        persistAuthSession();
+      }
       return handleResponse(true);
     }
-    //Poner los else if que hay (usuario no existe, o contraseña incorrecta, comprobalos en el postman)
     else if (response.status === 404) {
       return alert("Error usuario inexistente");
     } else if (response.status === 401) {
@@ -39,7 +41,7 @@ const Signup = () => {
   };
 
   return response ? (
-    <Redirect to="/main" />
+    <Navigate to="/main" replace />
   ) : (
     <Center>
       <Spacer />
@@ -68,4 +70,4 @@ const Signup = () => {
   );
 };
 
-export default Login;
+export default Signup;

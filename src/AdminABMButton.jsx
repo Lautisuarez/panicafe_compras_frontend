@@ -1,6 +1,5 @@
-import { Button } from "@chakra-ui/button";
-import { VStack } from "@chakra-ui/layout";
-import { MdAccountBox, MdShoppingBasket } from "react-icons/md";
+import { Button, VStack } from "@chakra-ui/react";
+import { MdAccountBox, MdShoppingBasket, MdReceipt } from "react-icons/md";
 import { Link as RouterLink } from "react-router-dom";
 import { isAdmin, isProductosPedidoAdmin } from "./protected/AuthService";
 
@@ -10,7 +9,7 @@ const AdminABMButton = () => {
   if (!fullAdmin && !productosAdmin) return null;
 
   return (
-    <VStack spacing={3} width="100%" align="center" py={2}>
+    <VStack gap={3} width="100%" align="center" py={2}>
       {fullAdmin ? (
         <Button
           as={RouterLink}
@@ -33,6 +32,18 @@ const AdminABMButton = () => {
           justifyContent="center"
         >
           Productos
+        </Button>
+      ) : null}
+      {fullAdmin ? (
+        <Button
+          as={RouterLink}
+          to="/facturas"
+          bgColor="#ebc699"
+          leftIcon={<MdReceipt />}
+          maxW="220px"
+          justifyContent="center"
+        >
+          Facturas
         </Button>
       ) : null}
     </VStack>

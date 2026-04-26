@@ -1,22 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Center,
-  ChakraProvider,
-  Flex,
-  VStack,
-  Image,
-  Box,
-} from "@chakra-ui/react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Button, Center, Flex, VStack, Image, Box } from "@chakra-ui/react";
+import { Routes, Route, Link } from "react-router-dom";
 import { MdHome } from "react-icons/md";
 import Main from "./Main";
 import Login from "./Login";
-import { extendTheme } from "@chakra-ui/react";
-import Fonts from "./Fonts";
 import ProtectedRoute from "./protected/ProtectedRoute";
 import ABM from "./components/ABM";
 import AdminProductosPedido from "./components/AdminProductosPedido";
+import InvoiceScanner from "./components/InvoiceScanner";
 import AdminRoute from "./protected/AdminRoute";
 import ProductionRoute from "./protected/ProductionRoute";
 import AdminABMButton from "./AdminABMButton";
@@ -24,23 +15,7 @@ import PedModal from "./components/PedModal";
 import configData from "./config.json";
 import MainProduction from "./MainProduction";
 
-const theme = extendTheme({
-  fonts: {
-    heading: "Bitter",
-    body: "Bitter",
-  },
-  styles: {
-    global: {
-      "html, body": {
-        fontSize: "md",
-        color: "#3a3937",
-        lineHeight: "tall",
-      },
-    },
-  },
-});
-
-const Routes = () => {
+export default function AppRoutes() {
   const [pedidosDate, handlePedidosDate] = useState([]);
   const [mostrarBoton, handleMostrarBoton] = useState(false);
 
@@ -54,7 +29,12 @@ const Routes = () => {
     })
       .then((response) => response.json())
       .then((res) => {
-        handlePedidosDate(res);
+        const list = Array.isArray(res)
+          ? res
+          : Array.isArray(res?.pedidos)
+            ? res.pedidos
+            : [];
+        handlePedidosDate(list);
       })
       .catch((error) => console.error(error));
   };
@@ -70,31 +50,19 @@ const Routes = () => {
   useEffect(() => {
     if (localStorage.getItem("pedidos")) {
       handleChange(localStorage.getItem("pedidos"));
-    } else {
-      console.log("cancel");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Router>
-      <div style={{ flex: 1, padding: "10px" }}>
-        <Switch>
-          <Route
-            path="/"
-            exact
-            children={
-              <ChakraProvider theme={theme}>
-                <Fonts />
-                <Login onSuccesLogin={handleChange} />
-              </ChakraProvider>
-            }
-          />
+    <div style={{ flex: 1, padding: "10px" }}>
+      <Routes>
+        <Route path="/" element={<Login onSuccesLogin={handleChange} />} />
 
-          <ProtectedRoute
-            path="/main"
-            exact
-            children={
+        <Route
+          path="/main"
+          element={
+            <ProtectedRoute>
               <Flex>
                 <VStack
                   bgColor="#f7d4ab"
@@ -103,7 +71,7 @@ const Routes = () => {
                   top="0"
                   left="0"
                   h="100%"
-                  spacing={4}
+                  gap={4}
                 >
                   <Center>
                     <Image
@@ -142,21 +110,20 @@ const Routes = () => {
                     </Center>
                   </Box>
                 </VStack>
-                <ChakraProvider theme={theme}>
-                  <Fonts />
-                  <Main />
-                </ChakraProvider>
+                <Main />
               </Flex>
-            }
-          />
-          <ProductionRoute
-            path="/mainproduction"
-            exact
-            children={
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/mainproduction"
+          element={
+            <ProductionRoute>
               <Flex>
                 <VStack
                   bgColor="#f7d4ab"
-                  z-index="1"
+                  zIndex="1"
                   position="fixed"
                   top="0"
                   left="0"
@@ -189,124 +156,168 @@ const Routes = () => {
                     </Button>
                   </Center>
                 </VStack>
-                <ChakraProvider theme={theme}>
-                  <Fonts />
-                  <MainProduction />
-                </ChakraProvider>
+                <MainProduction />
               </Flex>
-            }
-          />
-          <AdminRoute
-            path="/abm"
-            exact
-            children={
-              <Flex>
-                <VStack
-                  bgColor="#f7d4ab"
-                  zIndex="1"
-                  position="fixed"
-                  top="0"
-                  left="0"
-                  h="100%"
-                  spacing={4}
-                >
-                  <Center>
-                    <Image
-                      src="https://imgur.com/J9pzeqI.png"
-                      width="50px"
-                      alt="Panicafe Logo"
-                      m="20px 5px 0px 5px"
-                    />
-                  </Center>
-                  <Center>
-                    <Image
-                      src="https://imgur.com/20VHT84.png"
-                      width="170px"
-                      alt="Panicafe Logo"
-                      m="0px 5px 0px 5px"
-                    />
-                  </Center>
-                  <Center>
-                    <Button
-                      bgColor="#ebc699"
-                      leftIcon={<MdHome />}
-                      m="20px 10px 0px 10px"
-                      width="90%"
-                    >
-                      <Link to="/main">Inicio</Link>
-                    </Button>
-                  </Center>
-                  <Box p={4}>
-                    <Center>
-                      <AdminABMButton />
-                    </Center>
-                  </Box>
-                </VStack>
-                <ChakraProvider theme={theme}>
-                  <Fonts />
-                  <ABM />
-                </ChakraProvider>
-              </Flex>
-            }
-          />
-          <AdminRoute
-            path="/abm-productos"
-            exact
-            productosPedido
-            children={
-              <Flex>
-                <VStack
-                  bgColor="#f7d4ab"
-                  zIndex="1"
-                  position="fixed"
-                  top="0"
-                  left="0"
-                  h="100%"
-                  spacing={4}
-                >
-                  <Center>
-                    <Image
-                      src="https://imgur.com/J9pzeqI.png"
-                      width="50px"
-                      alt="Panicafe Logo"
-                      m="20px 5px 0px 5px"
-                    />
-                  </Center>
-                  <Center>
-                    <Image
-                      src="https://imgur.com/20VHT84.png"
-                      width="170px"
-                      alt="Panicafe Logo"
-                      m="0px 5px 0px 5px"
-                    />
-                  </Center>
-                  <Center>
-                    <Button
-                      bgColor="#ebc699"
-                      leftIcon={<MdHome />}
-                      m="20px 10px 0px 10px"
-                      width="90%"
-                    >
-                      <Link to="/main">Inicio</Link>
-                    </Button>
-                  </Center>
-                  <Box p={4}>
-                    <Center>
-                      <AdminABMButton />
-                    </Center>
-                  </Box>
-                </VStack>
-                <ChakraProvider theme={theme}>
-                  <Fonts />
-                  <AdminProductosPedido />
-                </ChakraProvider>
-              </Flex>
-            }
-          />
-        </Switch>
-      </div>
-    </Router>
-  );
-};
+            </ProductionRoute>
+          }
+        />
 
-export default Routes;
+        <Route
+          path="/abm"
+          element={
+            <AdminRoute>
+              <Flex>
+                <VStack
+                  bgColor="#f7d4ab"
+                  zIndex="1"
+                  position="fixed"
+                  top="0"
+                  left="0"
+                  h="100%"
+                  gap={4}
+                >
+                  <Center>
+                    <Image
+                      src="https://imgur.com/J9pzeqI.png"
+                      width="50px"
+                      alt="Panicafe Logo"
+                      m="20px 5px 0px 5px"
+                    />
+                  </Center>
+                  <Center>
+                    <Image
+                      src="https://imgur.com/20VHT84.png"
+                      width="170px"
+                      alt="Panicafe Logo"
+                      m="0px 5px 0px 5px"
+                    />
+                  </Center>
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdHome />}
+                      m="20px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/main">Inicio</Link>
+                    </Button>
+                  </Center>
+                  <Box p={4}>
+                    <Center>
+                      <AdminABMButton />
+                    </Center>
+                  </Box>
+                </VStack>
+                <ABM />
+              </Flex>
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/abm-productos"
+          element={
+            <AdminRoute productosPedido>
+              <Flex>
+                <VStack
+                  bgColor="#f7d4ab"
+                  zIndex="1"
+                  position="fixed"
+                  top="0"
+                  left="0"
+                  h="100%"
+                  gap={4}
+                >
+                  <Center>
+                    <Image
+                      src="https://imgur.com/J9pzeqI.png"
+                      width="50px"
+                      alt="Panicafe Logo"
+                      m="20px 5px 0px 5px"
+                    />
+                  </Center>
+                  <Center>
+                    <Image
+                      src="https://imgur.com/20VHT84.png"
+                      width="170px"
+                      alt="Panicafe Logo"
+                      m="0px 5px 0px 5px"
+                    />
+                  </Center>
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdHome />}
+                      m="20px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/main">Inicio</Link>
+                    </Button>
+                  </Center>
+                  <Box p={4}>
+                    <Center>
+                      <AdminABMButton />
+                    </Center>
+                  </Box>
+                </VStack>
+                <AdminProductosPedido />
+              </Flex>
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/facturas"
+          element={
+            <AdminRoute>
+              <Flex>
+                <VStack
+                  bgColor="#f7d4ab"
+                  zIndex="1"
+                  position="fixed"
+                  top="0"
+                  left="0"
+                  h="100%"
+                  gap={4}
+                >
+                  <Center>
+                    <Image
+                      src="https://imgur.com/J9pzeqI.png"
+                      width="50px"
+                      alt="Panicafe Logo"
+                      m="20px 5px 0px 5px"
+                    />
+                  </Center>
+                  <Center>
+                    <Image
+                      src="https://imgur.com/20VHT84.png"
+                      width="170px"
+                      alt="Panicafe Logo"
+                      m="0px 5px 0px 5px"
+                    />
+                  </Center>
+                  <Center>
+                    <Button
+                      bgColor="#ebc699"
+                      leftIcon={<MdHome />}
+                      m="20px 10px 0px 10px"
+                      width="90%"
+                    >
+                      <Link to="/main">Inicio</Link>
+                    </Button>
+                  </Center>
+                  <Box p={4}>
+                    <Center>
+                      <AdminABMButton />
+                    </Center>
+                  </Box>
+                </VStack>
+                <InvoiceScanner />
+              </Flex>
+            </AdminRoute>
+          }
+        />
+      </Routes>
+    </div>
+  );
+}

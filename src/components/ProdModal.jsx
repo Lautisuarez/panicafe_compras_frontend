@@ -16,8 +16,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Table,
+  TableContainer,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -26,7 +28,7 @@ import {
 } from "@chakra-ui/react";
 import { FiShoppingCart } from "react-icons/fi";
 import configData from "../config.json";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { productAllowsPedidoCompras } from "../utils/productOrder";
 
 const ProdModal = (props) => {
@@ -93,9 +95,22 @@ const ProdModal = (props) => {
     date = date.slice(0, 19);
     date = date.replace("T", " ");
 
+    let idCliente;
+    try {
+      idCliente = jwtDecode(localStorage.getItem("token")).id;
+    } catch {
+      toast({
+        title: "Sesión inválida",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const pedido = {
       precioTotal: totalPedido,
-      idCliente: jwt_decode(localStorage.getItem("token")).id,
+      idCliente,
       fecha: date,
       productos: props.prodList,
     };
@@ -189,9 +204,15 @@ const ProdModal = (props) => {
         </AlertDialogOverlay>
       </AlertDialog>
 
-      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        closeOnOverlayClick={false}
+        size="4xl"
+        scrollBehavior="inside"
+      >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent maxW="min(96vw, 960px)">
           <ModalHeader>Pedido</ModalHeader>
 
           {sent ? (
@@ -199,50 +220,72 @@ const ProdModal = (props) => {
           ) : (
             <ModalBody>
               {props.prodList.length > 0 ? (
-                <Table>
-                  <Thead>
-                    <Tr>
-                      <Th>Cantidad</Th>
-                      <Th>Producto</Th>
-                      <Th isNumeric>Precio total</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {props.prodList.map((producto, index) => {
-                      const totalUnitario = producto.precio * producto.cantidad;
-                      if (!Number.isNaN(totalUnitario)) {
-                        totalPedido += totalUnitario;
-                      }
-                      if (
-                        producto.cantidad !== 0 &&
-                        !Number.isNaN(totalUnitario)
-                      ) {
-                        return (
-                          <Tr key={index}>
-                            <Td isNumeric>{producto.cantidad}</Td>
-                            <Td w="100%">
-                              {capitalizeFirstLetter(producto.descripcion)}
-                            </Td>
-                            <Td isNumeric>
-                              ${parseFloat(totalUnitario).toFixed(2)}
-                            </Td>
-                          </Tr>
-                        );
-                      } else {
+                <TableContainer maxW="100%">
+                  <Table
+                    variant="simple"
+                    size="sm"
+                    sx={{ tableLayout: "fixed", width: "100%" }}
+                  >
+                    <colgroup>
+                      <col style={{ width: "12%" }} />
+                      <col style={{ width: "58%" }} />
+                      <col style={{ width: "30%" }} />
+                    </colgroup>
+                    <Thead>
+                      <Tr>
+                        <Th textAlign="center">Cantidad</Th>
+                        <Th>Producto</Th>
+                        <Th isNumeric>Precio total</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {props.prodList.map((producto, index) => {
+                        const totalUnitario = producto.precio * producto.cantidad;
+                        if (!Number.isNaN(totalUnitario)) {
+                          totalPedido += totalUnitario;
+                        }
+                        if (
+                          producto.cantidad !== 0 &&
+                          !Number.isNaN(totalUnitario)
+                        ) {
+                          return (
+                            <Tr key={index}>
+                              <Td textAlign="center">{producto.cantidad}</Td>
+                              <Td minW={0} wordBreak="break-word">
+                                {capitalizeFirstLetter(producto.descripcion)}
+                              </Td>
+                              <Td isNumeric whiteSpace="nowrap">
+                                ${parseFloat(totalUnitario).toFixed(2)}
+                              </Td>
+                            </Tr>
+                          );
+                        }
                         return null;
-                      }
-                    })}
-                    <Tr>
-                      <Th>Total del pedido</Th>
-                      <Td></Td>
-                      <Td isNumeric fontWeight="semibold">
-                        {totalPedido > 0
-                          ? `$${parseFloat(totalPedido).toFixed(2)}`
-                          : "$0"}
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
+                      })}
+                      <Tr>
+                        <Td
+                          colSpan={2}
+                          fontWeight="semibold"
+                          verticalAlign="middle"
+                          py={3}
+                        >
+                          <Text whiteSpace="nowrap">Total del pedido</Text>
+                        </Td>
+                        <Td
+                          isNumeric
+                          fontWeight="semibold"
+                          verticalAlign="middle"
+                          whiteSpace="nowrap"
+                          py={3}
+                        >
+                          {totalPedido > 0
+                            ? `$${parseFloat(totalPedido).toFixed(2)}`
+                            : "$0"}
+                        </Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </TableContainer>
               ) : (
                 <div>Parece que no sumaste ningun elemento al carrito aún.</div>
               )}

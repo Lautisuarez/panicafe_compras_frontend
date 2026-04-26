@@ -158,6 +158,7 @@ const ProdTable = (props) => {
                           <IconButton
                             aria-label="Añadir"
                             colorScheme="whatsapp"
+                            variant="solid"
                             icon={<ArrowRightIcon />}
                             isDisabled={!canOrder}
                             onClick={() => {

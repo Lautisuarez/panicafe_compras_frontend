@@ -1,21 +1,22 @@
 import { Button } from "@chakra-ui/react";
 import * as React from "react";
 import { Fragment } from "react";
-import { Redirect } from "react-router-dom";
-import { login, isAuthenticated, logout } from "./AuthService";
+import { Navigate, useLocation } from "react-router-dom";
+import { login } from "./AuthService";
 
-const NotifyLoginComponent = (props) => {
+const NotifyLoginComponent = () => {
   const [redirect, handleRedirect] = React.useState(false);
+  const location = useLocation();
 
   const loginHandler = () => {
     login();
     handleRedirect(true);
   };
 
-  let { from } = props.location.state || { from: { pathname: "/" } };
+  const from = location.state?.from || { pathname: "/" };
 
   return redirect ? (
-    <Redirect to={from} />
+    <Navigate to={from} replace />
   ) : (
     <Fragment>
       <h1>Identifiquese para continuar.</h1>
@@ -25,3 +26,5 @@ const NotifyLoginComponent = (props) => {
     </Fragment>
   );
 };
+
+export default NotifyLoginComponent;

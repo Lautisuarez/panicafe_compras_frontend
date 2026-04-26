@@ -27,7 +27,7 @@ import { getOrdersByUser } from "./api/orders";
 import CountdownTimer from "./components/CountDownTimer";
 import PreviewModal from "./components/PreviewModal";
 import { logout } from "./protected/AuthService";
-import { Redirect, useHistory } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const MainProduction = () => {
   const [selectedUser, setSelectedUser] = useState("");
@@ -39,7 +39,7 @@ const MainProduction = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isFistTime, setIsFistTime] = useState(true);
   const [redirect, handleRedirect] = React.useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const logoutHandler = () => {
     localStorage.removeItem("timeLeft");
@@ -54,9 +54,9 @@ const MainProduction = () => {
       }
       getUsersProduction();
     } else {
-      history.push("/main")
+      navigate("/main");
     }
-  }, [history]);
+  }, [navigate]);
 
   const handleSearch = async () => {
     if (selectedUser && dateFrom && dateTo) {
@@ -80,7 +80,7 @@ const MainProduction = () => {
   };
 
   return redirect ? (
-    <Redirect to="/" />
+    <Navigate to="/" replace />
   ) : (
     <Box w="100%">
       <Flex

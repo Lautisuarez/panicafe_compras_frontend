@@ -15,7 +15,7 @@ export const getOrdersByUser = async (username, since, to) => {
         });
         return await response.json();
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return [];
     }
 };
@@ -29,7 +29,7 @@ export const getOrdersDetail = async (ordersID) => {
         });
         return await response.json();
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return [];
     }
 };

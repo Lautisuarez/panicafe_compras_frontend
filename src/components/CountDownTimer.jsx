@@ -32,19 +32,20 @@ const CountdownTimer = ({ initialMinutes, logoutFunction }) => {
 
   return (
     <Box
-      d="flex"
-      flexDir="column"
+      display="flex"
+      flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      p={2}
+      p={3}
+      minW="148px"
       borderRadius="md"
       boxShadow="lg"
       bg="red.300"
     >
-      <Text fontSize="sm">
+      <Text fontSize="sm" textAlign="center" w="100%">
         Tiempo de sesión:
       </Text>
-      <Text fontSize="md" fontWeight="bold">
+      <Text fontSize="md" fontWeight="bold" textAlign="center" w="100%" mt={1}>
         {formatTime(timeLeft)}
       </Text>
     </Box>

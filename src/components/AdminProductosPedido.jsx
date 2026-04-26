@@ -11,14 +11,19 @@ import {
   InputLeftElement,
   Spacer,
   Switch,
+  Table,
+  Tbody,
+  Td,
   Text,
+  Th,
+  Thead,
+  Tr,
   VStack,
   useToast,
 } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
 import * as React from "react";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router-dom";
 import { isProductosPedidoAdmin, logout } from "../protected/AuthService";
 import HeaderModel from "./HeaderModel";
 import {
@@ -101,7 +106,7 @@ const AdminProductosPedido = () => {
   }, [items, searchQuery]);
 
   if (redirect) {
-    return <Redirect to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   if (isProductosPedidoAdmin() !== true) {
@@ -117,7 +122,7 @@ const AdminProductosPedido = () => {
           Desconectarse
         </Button>
       </HStack>
-      <VStack align="stretch" spacing={4} mt={4}>
+      <VStack align="stretch" gap={4} mt={4}>
         {!loading && !loadError && items.length > 0 && (
           <FormControl maxW="md">
             <FormLabel htmlFor="admin-productos-buscar" mb={1}>

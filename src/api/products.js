@@ -33,6 +33,31 @@ export const fetchProductosCatalogo = async () => {
 };
 
 /**
+ * Search products by name (GET /productos/search?q=...).
+ * Minimum 2 characters on the server; returns up to 20 results.
+ */
+export const searchProductos = async (q) => {
+  const trimmed = (q || "").trim();
+  if (trimmed.length < 2) {
+    return [];
+  }
+  const params = new URLSearchParams({ q: trimmed });
+  const response = await fetch(
+    `${configData.SERVER_URL}/productos/search?${params.toString()}`,
+    {
+      method: "GET",
+      headers: getHeader(),
+    }
+  );
+  const data = await parseJsonSafe(response);
+  if (!response.ok) {
+    const msg = data.mensaje || data.message || `Error ${response.status}`;
+    throw new Error(msg);
+  }
+  return Array.isArray(data) ? data : [];
+};
+
+/**
  * Full article list for admin (GET /productos/admin).
  */
 export const getProductosAdmin = async () => {

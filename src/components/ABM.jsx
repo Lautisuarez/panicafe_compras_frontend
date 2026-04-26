@@ -1,26 +1,41 @@
-import { Button, ButtonGroup } from "@chakra-ui/button";
-import { Container, HStack, Spacer, VStack } from "@chakra-ui/layout";
-import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/table";
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  HStack,
+  Spacer,
+  VStack,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import * as React from "react";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router-dom";
 import { logout } from "../protected/AuthService";
 import HeaderModel from "./HeaderModel";
 import AbmModal from "./AbmModal";
-import jwt_decode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { getUsers, deleteUser } from "../api/users";
 
-const ABM = (props) => {
+const ABM = () => {
   const [token, setToken] = React.useState({});
   const [redirect, handleRedirect] = React.useState(false);
   const [users, setUsers] = React.useState([]);
 
-
   React.useEffect(() => {
     const mountABM = async () => {
       setUsers(await getUsers());
-      setToken(jwt_decode(localStorage.getItem("token")));
-    }
+      try {
+        const raw = localStorage.getItem("token");
+        setToken(raw ? jwtDecode(raw) : {});
+      } catch {
+        setToken({});
+      }
+    };
     mountABM();
   }, []);
   const logoutHandler = () => {
@@ -32,14 +47,14 @@ const ABM = (props) => {
     const result = window.confirm(
       "¿Está seguro de que desea eliminar este usuario)?"
     );
-    if(result){
+    if (result) {
       await deleteUser(user);
       setUsers(await getUsers());
-    } 
+    }
   };
 
   return redirect ? (
-    <Redirect to="/" />
+    <Navigate to="/" replace />
   ) : token.isAdmin === 1 ? (
     <Container paddingLeft="150px">
       <HStack>
@@ -50,7 +65,7 @@ const ABM = (props) => {
         </Button>
       </HStack>
       <VStack>
-        <AbmModal getUsers={async() => setUsers(await getUsers())} />
+        <AbmModal getUsers={async () => setUsers(await getUsers())} />
         <Spacer />
         <Table>
           <Thead>
