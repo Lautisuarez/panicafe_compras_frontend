@@ -50,8 +50,8 @@ const ABM = () => {
     setUsers(list);
     setSelectedUser((prev) => {
       if (!prev) return null;
-      const next = list.find((u) => u.usuario === prev.usuario);
-      return next || prev;
+      const next = list.find((u) => u != null && u.usuario === prev.usuario);
+      return next ?? prev;
     });
   }, []);
 
@@ -96,9 +96,11 @@ const ABM = () => {
   };
 
   const sortedUsers = React.useMemo(() => {
-    return [...users].sort((a, b) =>
-      (a.usuario || "").localeCompare(b.usuario || "", "es", { sensitivity: "base" })
-    );
+    return [...users]
+      .filter((u) => u != null && u.usuario)
+      .sort((a, b) =>
+        (a.usuario || "").localeCompare(b.usuario || "", "es", { sensitivity: "base" })
+      );
   }, [users]);
 
   const localeName = (id) => {
