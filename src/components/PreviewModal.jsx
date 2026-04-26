@@ -18,7 +18,9 @@ import {
 } from "@chakra-ui/react";
 import { getOrdersDetail } from "../api/orders";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import { applyPlugin } from "jspdf-autotable";
+
+applyPlugin(jsPDF);
 
 export default function PreviewModal({ ordersID, username, dateFrom, dateTo }) {
   const [products, setProducts] = useState([]);
