@@ -31,6 +31,7 @@ import { FiPlus } from "react-icons/fi";
 import { CheckCircleIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import configData from "../config.json";
 import { getLocales } from "../api/users";
+import { ROLE_SELECT_OPTIONS } from "../utils/isAdminLabels";
 
 const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
@@ -45,7 +46,6 @@ const AbmModal = (props) => {
   const [user, setUser] = React.useState("");
   const [userCreated, setUserCreated] = React.useState(false);
   const [password, setPassword] = React.useState("");
-  /** JWT isAdmin: 0 usuario, 1 admin, 3 catálogo productos pedido */
   const [userRole, setUserRole] = React.useState(0);
   const [nombre, setNombre] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -275,9 +275,11 @@ const AbmModal = (props) => {
                     onChange={(e) => setUserRole(Number(e.target.value))}
                     bg="white"
                   >
-                    <option value="0">Usuario</option>
-                    <option value="1">Administrador</option>
-                    <option value="3">Administrador de catálogo (productos pedido)</option>
+                    {ROLE_SELECT_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
                   </Select>
                 </FormControl>
               </VStack>

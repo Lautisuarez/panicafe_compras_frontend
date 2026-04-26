@@ -24,12 +24,7 @@ import {
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import PasswordInput from "./PasswordInput";
 import { updateUser } from "../api/users";
-
-const roleLabel = (isAdmin) => {
-  if (isAdmin === 1) return "Administrador";
-  if (isAdmin === 3) return "Administrador de catálogo (productos pedido)";
-  return "Usuario";
-};
+import { roleLabelLong, ROLE_SELECT_OPTIONS } from "../utils/isAdminLabels";
 
 const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
@@ -149,7 +144,7 @@ export default function AbmUserModal({
                 <Text fontSize="sm" color="gray.600">
                   Rol
                 </Text>
-                <Text fontWeight="medium">{roleLabel(Number(role))}</Text>
+                <Text fontWeight="medium">{roleLabelLong(Number(role))}</Text>
               </div>
             </SimpleGrid>
           ) : (
@@ -194,9 +189,11 @@ export default function AbmUserModal({
               <FormControl>
                 <FormLabel>Rol</FormLabel>
                 <Select value={role} onChange={(e) => setRole(e.target.value)} bg="white">
-                  <option value="0">Usuario</option>
-                  <option value="1">Administrador</option>
-                  <option value="3">Administrador de catálogo (productos pedido)</option>
+                  {ROLE_SELECT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </Select>
               </FormControl>
               <FormControl>

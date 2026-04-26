@@ -31,12 +31,7 @@ import AbmUserModal from "./AbmUserModal";
 import { jwtDecode } from "jwt-decode";
 import { DeleteIcon, EditIcon, SearchIcon, ViewIcon } from "@chakra-ui/icons";
 import { getUsers, deleteUser, getLocales } from "../api/users";
-
-const roleLabelShort = (isAdmin) => {
-  if (isAdmin === 1) return "Admin";
-  if (isAdmin === 3) return "Catálogo";
-  return "Usuario";
-};
+import { roleLabelLong, roleLabelShort } from "../utils/isAdminLabels";
 
 const ABM = () => {
   const [token, setToken] = React.useState({});
@@ -230,7 +225,13 @@ const ABM = () => {
                         <Td>{row.nombre || "—"}</Td>
                         <Td>{row.email || "—"}</Td>
                         <Td>{localeName(row.id)}</Td>
-                        <Td>{roleLabelShort(row.isAdmin)}</Td>
+                        <Td>
+                          <Tooltip label={roleLabelLong(row.isAdmin)} hasArrow placement="top">
+                            <Text as="span" cursor="default">
+                              {roleLabelShort(row.isAdmin)}
+                            </Text>
+                          </Tooltip>
+                        </Td>
                         <Td textAlign="right">
                           <ButtonGroup size="sm" variant="outline" spacing={1}>
                             <Tooltip label="Ver datos" hasArrow>
