@@ -56,5 +56,5 @@ jobs:
         port: ${{ secrets.SERVER_PORT }}
         script: |
           cd /home/administrador/web/panicafe-front
-          pm2 delete panicafe-frontend
-          PORT=2525 pm2 start serve --name panicafe-frontend -- -s build -n
+          pm2 delete panicafe-frontend 2>/dev/null || true
+          pm2 start npx --name panicafe-frontend -- --yes serve -s build -l 2525 -n
