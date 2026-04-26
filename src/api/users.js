@@ -7,6 +7,14 @@ const getHeader = () => {
     })
 }
 
+const strField = (obj, ...keys) => {
+    for (const k of keys) {
+        if (obj[k] == null || obj[k] === "") continue;
+        return String(obj[k]).trim();
+    }
+    return "";
+};
+
 const normalizeUserRow = (item) => {
     if (item == null) return null;
     if (typeof item === "string") {
@@ -21,14 +29,14 @@ const normalizeUserRow = (item) => {
         };
     }
     if (typeof item !== "object") return null;
-    const usuario = item.usuario != null ? String(item.usuario).trim() : "";
+    const usuario = strField(item, "usuario", "Usuario");
     if (!usuario) return null;
     return {
         usuario,
-        nombre: item.nombre ?? "",
-        email: item.email ?? "",
-        id: item.id ?? 0,
-        isAdmin: item.isAdmin ?? 0,
+        nombre: strField(item, "nombre", "Nombre"),
+        email: strField(item, "email", "Email"),
+        id: item.id ?? item.Id ?? 0,
+        isAdmin: item.isAdmin ?? item.IsAdmin ?? 0,
     };
 };
 
