@@ -2,105 +2,163 @@ import * as React from "react";
 import {
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Icon,
   IconButton,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Text,
+  Tooltip,
   useDisclosure,
   Input,
   Select,
-  Spacer,
   VStack,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  useToast,
+  Box,
 } from "@chakra-ui/react";
 import PasswordInput from "./PasswordInput";
-
 import { FiPlus } from "react-icons/fi";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import configData from "../config.json";
-import AlertModel from "./AlertModel";
+import { getLocales } from "../api/users";
+
+const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
 const AbmModal = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
-  const [isValidated, setValidated] = React.useState(false);
+  const [showErrors, setShowErrors] = React.useState(false);
   const [select, setSelect] = React.useState("");
   const [infoAddUser, setInfoAddUser] = React.useState([]);
   const [id, setId] = React.useState(0);
   const [user, setUser] = React.useState("");
   const [userCreated, setUserCreated] = React.useState(false);
   const [password, setPassword] = React.useState("");
-  /** JWT isAdmin claim sent to /addUser: 0 usuario, 1 admin completo, 3 solo catálogo productos pedido */
+  /** JWT isAdmin: 0 usuario, 1 admin, 3 catálogo productos pedido */
   const [userRole, setUserRole] = React.useState(0);
   const [nombre, setNombre] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const IconoCarrito = () => {
-    return <Icon as={FiPlus} />;
-  };
-  const getInfoAddUser = async () => {
-    const response = await fetch(configData.SERVER_URL + "/getInfoAddUser", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    });
+  const [loadingLocales, setLoadingLocales] = React.useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
 
-    setInfoAddUser(await response.json());
-  };
+  const isFormValid =
+    validateEmail(email) &&
+    nombre.trim() !== "" &&
+    user.trim() !== "" &&
+    password !== "" &&
+    select !== "";
 
-  const handleAPICall = async (usuario, password, role, nombre, email) => {
-    const response = await fetch(configData.SERVER_URL + "/addUser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        id,
-        isAdmin: role,
-        usuario,
-        password,
-        nombre,
-        email,
-      }),
-    });
-    if (response.status === 201) {
-      setUserCreated(true);
-    }
-  };
-
-  const helper = () => {
-    props.getUsers();
-    onClose();
-
-    setUserCreated(false);
+  const resetFormState = () => {
+    setShowErrors(false);
+    setSelect("");
+    setId(0);
+    setUser("");
+    setPassword("");
     setUserRole(0);
+    setNombre("");
+    setEmail("");
   };
 
-  const validateEmail = (email) => {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
+  const handleClose = () => {
+    if (userCreated) {
+      props.getUsers();
+    }
+    setUserCreated(false);
+    resetFormState();
+    onClose();
   };
 
-  const formValidation = () => {
-    const res =
-      validateEmail(email) &&
-      nombre !== "" &&
-      user !== "" &&
-      password !== "" &&
-      select !== ""
-        ? false
-        : true;
-    setValidated(res);
+  const handleOpen = async () => {
+    resetFormState();
+    setUserCreated(false);
+    setLoadingLocales(true);
+    try {
+      const data = await getLocales();
+      setInfoAddUser(Array.isArray(data) ? data : []);
+    } catch {
+      setInfoAddUser([]);
+      toast({
+        title: "No se pudo cargar el listado de sucursales",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadingLocales(false);
+    }
+    onOpen();
+  };
+
+  const handleAPICall = async () => {
+    if (!isFormValid) {
+      setShowErrors(true);
+      toast({
+        title: "Revisá los campos marcados",
+        status: "warning",
+        duration: 3500,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(`${configData.SERVER_URL}/adduser`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          id,
+          isAdmin: userRole,
+          usuario: user.trim().toLowerCase(),
+          pass: password,
+          nombre: nombre.trim(),
+          email: email.trim(),
+        }),
+      });
+
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
+
+      if (response.status === 201) {
+        setUserCreated(true);
+        setShowErrors(false);
+        return;
+      }
+
+      const msg =
+        typeof data === "string"
+          ? data
+          : data?.mensaje || "No se pudo crear el usuario. Verificá los datos o si el usuario ya existe.";
+      toast({ title: msg, status: "error", duration: 5000, isClosable: true });
+    } catch {
+      toast({
+        title: "Error de conexión",
+        description: "No se pudo contactar al servidor.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const onDropSelect = (item) => {
@@ -108,101 +166,110 @@ const AbmModal = (props) => {
     setSelect(item.nombre);
   };
 
-  React.useEffect(() => {
-    formValidation();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nombre, user, password, select, validateEmail(email)]);
-
   return (
     <>
-      <IconButton
-        icon={<IconoCarrito />}
-        m="5px"
-        onClick={() => {
-          getInfoAddUser();
-          setUserRole(0);
-          onOpen();
-        }}
-      />
-      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
-        <ModalOverlay />
+      <Tooltip label="Añadir usuario" hasArrow>
+        <IconButton
+          icon={<Icon as={FiPlus} />}
+          aria-label="Añadir usuario"
+          onClick={handleOpen}
+          isLoading={loadingLocales}
+        />
+      </Tooltip>
 
+      <Modal isOpen={isOpen} onClose={handleClose} size="xl" closeOnOverlayClick={false}>
+        <ModalOverlay bg="blackAlpha.400" />
         {!userCreated ? (
-          <ModalContent>
-            <ModalHeader>Añadir usuario</ModalHeader>
-
+          <ModalContent mx={4}>
+            <ModalHeader pb={2}>
+              Nuevo usuario
+              <Text fontWeight="normal" fontSize="sm" color="gray.600" mt={1}>
+                Los usuarios inician sesión con el nombre de usuario y la contraseña definidos aquí.
+              </Text>
+            </ModalHeader>
+            <ModalCloseButton />
             <ModalBody>
-              <VStack>
-                <Spacer />
-                <Input
-                  placeholder="Nombre"
-                  onChange={(event) => {
-                    setNombre(event.target.value);
-                  }}
-                />
-                {nombre === "" ? (
-                  <AlertModel text="Por favor ingrese nombre." />
-                ) : null}
-                <Input
-                  placeholder="Email"
-                  onChange={(event) => {
-                    setEmail(event.target.value);
-                  }}
-                />
-                {validateEmail(email) ? null : (
-                  <AlertModel text="Por favor ingrese un formato de email válido." />
-                )}
-                <Input
-                  placeholder="Usuario"
-                  onChange={(event) => {
-                    setUser(event.target.value);
-                  }}
-                />
-                {user === "" ? (
-                  <AlertModel text="Por favor ingrese un usuario." />
-                ) : null}
+              <VStack spacing={4} align="stretch">
+                <FormControl isRequired isInvalid={showErrors && !nombre.trim()}>
+                  <FormLabel>Nombre completo</FormLabel>
+                  <Input
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    placeholder="Ej. María García"
+                    bg="white"
+                  />
+                  <FormErrorMessage>Ingresá el nombre</FormErrorMessage>
+                </FormControl>
 
-                <PasswordInput
-                  onChange={(event) => {
-                    setPassword(event.target.value);
-                  }}
-                  placeholder={"Contraseña"}
-                />
-                {password === "" ? (
-                  <AlertModel text="Por favor ingrese una contraseña segura" />
-                ) : null}
-                <Menu>
-                  {({ isOpen }) => (
-                    <>
-                      <MenuButton
-                        isActive={isOpen}
-                        as={Button}
-                        rightIcon={<ChevronDownIcon />}
-                        isFullWidth="true"
-                      >
-                        {isOpen
-                          ? "Cerrar"
-                          : select === ""
-                          ? "Sucursal"
-                          : select}
-                      </MenuButton>
-                      <MenuList>
-                        {infoAddUser.map((datos) => {
-                          if (datos.nombre === "" || datos.id === "")
-                            return null;
+                <FormControl isRequired isInvalid={showErrors && !validateEmail(email)}>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="correo@empresa.com"
+                    bg="white"
+                  />
+                  <FormErrorMessage>Usá un email válido</FormErrorMessage>
+                </FormControl>
 
-                          return (
-                            <MenuItem onClick={() => onDropSelect(datos)}>
-                              {datos.nombre}
-                            </MenuItem>
-                          );
-                        })}
-                      </MenuList>
-                    </>
-                  )}
-                </Menu>
+                <FormControl isRequired isInvalid={showErrors && !user.trim()}>
+                  <FormLabel>Nombre de usuario</FormLabel>
+                  <Input
+                    value={user}
+                    onChange={(e) => setUser(e.target.value)}
+                    placeholder="Se guardará en minúsculas"
+                    bg="white"
+                    autoComplete="off"
+                  />
+                  <FormErrorMessage>Ingresá el nombre de usuario</FormErrorMessage>
+                </FormControl>
+
+                <FormControl isRequired isInvalid={showErrors && !password}>
+                  <FormLabel>Contraseña</FormLabel>
+                  <PasswordInput
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Contraseña inicial"
+                  />
+                  <FormErrorMessage>Ingresá una contraseña</FormErrorMessage>
+                </FormControl>
+
+                <FormControl isRequired isInvalid={showErrors && select === ""}>
+                  <FormLabel>Sucursal</FormLabel>
+                  <Menu>
+                    {({ isOpen: menuOpen }) => (
+                      <>
+                        <MenuButton
+                          as={Button}
+                          rightIcon={<ChevronDownIcon />}
+                          isActive={menuOpen}
+                          width="100%"
+                          justifyContent="space-between"
+                          fontWeight="normal"
+                          textAlign="left"
+                          variant="outline"
+                        >
+                          {select === "" ? "Seleccionar sucursal" : select}
+                        </MenuButton>
+                        <MenuList maxH="260px" overflowY="auto" zIndex={1500}>
+                          {infoAddUser.map((datos) => {
+                            if (datos.nombre === "" || datos.id === "") return null;
+                            return (
+                              <MenuItem key={datos.id} onClick={() => onDropSelect(datos)}>
+                                {datos.nombre}
+                              </MenuItem>
+                            );
+                          })}
+                        </MenuList>
+                      </>
+                    )}
+                  </Menu>
+                  <FormErrorMessage>Seleccioná una sucursal</FormErrorMessage>
+                </FormControl>
+
                 <FormControl>
-                  <FormLabel mb={1}>Rol</FormLabel>
+                  <FormLabel>Rol</FormLabel>
                   <Select
                     value={String(userRole)}
                     onChange={(e) => setUserRole(Number(e.target.value))}
@@ -210,43 +277,44 @@ const AbmModal = (props) => {
                   >
                     <option value="0">Usuario</option>
                     <option value="1">Administrador</option>
-                    <option value="3">
-                      Administrador de catálogo (productos pedido)
-                    </option>
+                    <option value="3">Administrador de catálogo (productos pedido)</option>
                   </Select>
                 </FormControl>
               </VStack>
             </ModalBody>
 
-            <ModalFooter>
+            <ModalFooter gap={3} flexWrap="wrap">
               <Button
-                colorScheme="whatsapp"
-                onClick={() =>
-                  handleAPICall(user, password, userRole, nombre, email)
-                }
-                isDisabled={isValidated}
+                colorScheme="orange"
+                onClick={handleAPICall}
+                isLoading={submitting}
+                loadingText="Creando…"
               >
-                Enviar
+                Crear usuario
               </Button>
-              <Button variant="ghost" onClick={onClose}>
-                Cerrar
+              <Button variant="ghost" onClick={handleClose} isDisabled={submitting}>
+                Cancelar
               </Button>
             </ModalFooter>
           </ModalContent>
         ) : (
-          <ModalContent>
-            <ModalHeader>Pedido</ModalHeader>
-
+          <ModalContent mx={4}>
+            <ModalHeader>Usuario creado</ModalHeader>
+            <ModalCloseButton />
             <ModalBody>
-              <VStack>
-                <Spacer />
-                <h3>Usuario Creado</h3>
+              <VStack spacing={4} py={2}>
+                <Box color="green.500">
+                  <CheckCircleIcon boxSize={12} />
+                </Box>
+                <Text textAlign="center" fontSize="md">
+                  El usuario <strong>{user.trim().toLowerCase()}</strong> fue dado de alta y ya puede iniciar sesión
+                  con la contraseña indicada.
+                </Text>
               </VStack>
             </ModalBody>
-
             <ModalFooter>
-              <Button variant="ghost" onClick={helper}>
-                Cerrar
+              <Button colorScheme="orange" onClick={handleClose}>
+                Listo
               </Button>
             </ModalFooter>
           </ModalContent>

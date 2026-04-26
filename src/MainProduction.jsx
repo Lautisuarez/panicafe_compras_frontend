@@ -117,8 +117,15 @@ const MainProduction = () => {
                   {users.map(
                     (user) =>
                       user != null && (
-                        <option key={user} value={user}>
-                          {user}
+                        <option
+                          key={typeof user === "string" ? user : user.usuario}
+                          value={typeof user === "string" ? user : user.usuario}
+                        >
+                          {typeof user === "string"
+                            ? user
+                            : user.nombre
+                            ? `${user.nombre} (${user.usuario})`
+                            : user.usuario}
                         </option>
                       )
                   )}
