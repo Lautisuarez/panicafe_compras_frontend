@@ -72,6 +72,20 @@ export const isAdmin = () => {
   return token.isAdmin === 1 ? true : false;
 };
 
+/** JWT isAdmin 4: only invoice scanning (no ABM, no catalog pedidos). */
+export const isInvoiceScanOnly = () => {
+  const token = decodeToken();
+  if (!token || token.isAdmin === null) return null;
+  return token.isAdmin === 4 ? true : false;
+};
+
+/** Full admin (1) or facturas-only (4) — can use /facturas and invoice APIs. */
+export const canAccessInvoiceScanner = () => {
+  const token = decodeToken();
+  if (!token || token.isAdmin === null) return null;
+  return token.isAdmin === 1 || token.isAdmin === 4 ? true : false;
+};
+
 /** Admin full (users ABM) or productos-pedido-only role (JWT isAdmin 1 or 3). */
 export const isProductosPedidoAdmin = () => {
   const token = decodeToken();

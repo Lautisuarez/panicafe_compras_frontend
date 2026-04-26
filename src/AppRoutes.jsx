@@ -14,7 +14,11 @@ import AdminABMButton from "./AdminABMButton";
 import PedModal from "./components/PedModal";
 import configData from "./config.json";
 import MainProduction from "./MainProduction";
-import { isTokenExpired, logout } from "./protected/AuthService";
+import {
+  isTokenExpired,
+  isInvoiceScanOnly,
+  logout,
+} from "./protected/AuthService";
 
 export default function AppRoutes() {
   const [pedidosDate, handlePedidosDate] = useState([]);
@@ -283,7 +287,7 @@ export default function AppRoutes() {
         <Route
           path="/facturas"
           element={
-            <AdminRoute>
+            <AdminRoute invoiceScanner>
               <Flex>
                 <VStack
                   bgColor="#f7d4ab"
@@ -317,7 +321,11 @@ export default function AppRoutes() {
                       m="20px 10px 0px 10px"
                       width="90%"
                     >
-                      <Link to="/main">Inicio</Link>
+                      <Link
+                        to={isInvoiceScanOnly() ? "/facturas" : "/main"}
+                      >
+                        Inicio
+                      </Link>
                     </Button>
                   </Center>
                   <Box p={4}>

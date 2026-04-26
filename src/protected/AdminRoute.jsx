@@ -1,5 +1,9 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { isAdmin, isProductosPedidoAdmin } from "./AuthService";
+import {
+  isAdmin,
+  isProductosPedidoAdmin,
+  canAccessInvoiceScanner,
+} from "./AuthService";
 import * as React from "react";
 
 /**
@@ -7,10 +11,20 @@ import * as React from "react";
  * @param {import("react").ReactNode} [props.children]
  * @param {import("react").ComponentType} [props.component]
  * @param {boolean} [props.productosPedido] - if true, allow isAdmin 1 or 3; else only 1
+ * @param {boolean} [props.invoiceScanner] - if true, allow isAdmin 1 or 4
  */
-const AdminRoute = ({ component: Component, children, productosPedido }) => {
+const AdminRoute = ({
+  component: Component,
+  children,
+  productosPedido,
+  invoiceScanner,
+}) => {
   const location = useLocation();
-  const check = productosPedido ? isProductosPedidoAdmin : isAdmin;
+  const check = invoiceScanner
+    ? canAccessInvoiceScanner
+    : productosPedido
+      ? isProductosPedidoAdmin
+      : isAdmin;
 
   let allowed;
   try {

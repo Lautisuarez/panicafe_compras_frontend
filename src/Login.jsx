@@ -12,6 +12,7 @@ import PasswordInput from "./components/PasswordInput";
 import { Navigate } from "react-router-dom";
 import {
   isProduction,
+  isInvoiceScanOnly,
   login as persistAuthSession,
   setSessionTimeLeftForNewToken,
 } from "./protected/AuthService";
@@ -71,7 +72,16 @@ const Login = (props) => {
   };
 
   return response ? (
-    <Navigate to={isProduction() ? "/mainproduction" : "/main"} replace />
+    <Navigate
+      to={
+        isProduction()
+          ? "/mainproduction"
+          : isInvoiceScanOnly()
+            ? "/facturas"
+            : "/main"
+      }
+      replace
+    />
   ) : (
     <Center>
       <Spacer />

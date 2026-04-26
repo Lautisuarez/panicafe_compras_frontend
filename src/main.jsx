@@ -9,7 +9,12 @@ import {
 import HeaderModel from "./components/HeaderModel";
 import TabContainer from "./components/TabContainer";
 import CountdownTimer from "./components/CountDownTimer";
-import { logout, isProduction, SESSION_TIMER_CAP_MINUTES } from "./protected/AuthService";
+import {
+  logout,
+  isProduction,
+  isInvoiceScanOnly,
+  SESSION_TIMER_CAP_MINUTES,
+} from "./protected/AuthService";
 import { Navigate, useNavigate } from "react-router-dom";
 import { fetchProductosCatalogo } from "./api/products";
 import { productAllowsPedidoCompras } from "./utils/productOrder";
@@ -44,6 +49,10 @@ const Main = () => {
   React.useEffect(() => {
     if (isProduction()) {
       navigate("/mainproduction");
+      return;
+    }
+    if (isInvoiceScanOnly()) {
+      navigate("/facturas", { replace: true });
       return;
     }
     loadProductos();

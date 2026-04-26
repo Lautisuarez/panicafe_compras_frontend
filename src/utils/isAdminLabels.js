@@ -13,6 +13,8 @@ export const roleLabelShort = (isAdmin) => {
       return "Producción";
     case 3:
       return "Catálogo";
+    case 4:
+      return "Facturas";
     default:
       return "Usuario";
   }
@@ -27,6 +29,8 @@ export const roleLabelLong = (isAdmin) => {
       return "Usuario de producción";
     case 3:
       return "Administrador de catálogo";
+    case 4:
+      return "Escaneo de facturas";
     default:
       return "Usuario (sucursal)";
   }
@@ -38,4 +42,5 @@ export const ROLE_SELECT_OPTIONS = [
   { value: "1", label: "Administrador completo" },
   { value: "2", label: "Usuario de producción" },
   { value: "3", label: "Administrador de catálogo" },
+  { value: "4", label: "Escaneo de facturas" },
 ];
