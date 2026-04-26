@@ -67,8 +67,7 @@ export default function PreviewModal({ ordersID, username, dateFrom, dateTo }) {
     let totalPagesExp = "{total_pages_count_string}";
 
     const pageContent = function (data) {
-        // FOOTER
-        let str = "Página " + data.pageCount;
+        let str = "Página " + data.pageNumber;
         if (typeof doc.putTotalPages === 'function') {
             str = str + " de " + totalPagesExp;
         }
