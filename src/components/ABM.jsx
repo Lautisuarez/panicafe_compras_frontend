@@ -6,6 +6,9 @@ import {
   HStack,
   Heading,
   IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Spacer,
   Table,
   TableContainer,
@@ -26,7 +29,7 @@ import HeaderModel from "./HeaderModel";
 import AbmModal from "./AbmModal";
 import AbmUserModal from "./AbmUserModal";
 import { jwtDecode } from "jwt-decode";
-import { DeleteIcon, EditIcon, ViewIcon } from "@chakra-ui/icons";
+import { DeleteIcon, EditIcon, SearchIcon, ViewIcon } from "@chakra-ui/icons";
 import { getUsers, deleteUser, getLocales } from "../api/users";
 
 const roleLabelShort = (isAdmin) => {
@@ -42,6 +45,7 @@ const ABM = () => {
   const [locales, setLocales] = React.useState([]);
   const [selectedUser, setSelectedUser] = React.useState(null);
   const [startInEditMode, setStartInEditMode] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const { isOpen: isUserModalOpen, onOpen: onUserModalOpen, onClose: onUserModalClose } =
     useDisclosure();
 
@@ -109,6 +113,22 @@ const ABM = () => {
     return loc?.nombre?.trim() || `#${id}`;
   };
 
+  const filteredUsers = React.useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return sortedUsers;
+    return sortedUsers.filter((row) => {
+      const sucursal = localeName(row.id).toLowerCase();
+      const chunks = [
+        row.usuario,
+        row.nombre,
+        row.email,
+        sucursal,
+        roleLabelShort(row.isAdmin),
+      ].map((s) => String(s || "").toLowerCase());
+      return chunks.some((c) => c.includes(q));
+    });
+  }, [sortedUsers, searchQuery, locales]);
+
   return redirect ? (
     <Navigate to="/" replace />
   ) : token.isAdmin === 1 ? (
@@ -142,6 +162,7 @@ const ABM = () => {
         >
           <HStack
             justify="space-between"
+            align="center"
             px={6}
             py={4}
             borderBottomWidth="1px"
@@ -153,7 +174,22 @@ const ABM = () => {
             <Heading size="sm" fontWeight="semibold">
               Listado
             </Heading>
-            <AbmModal getUsers={refreshUsers} />
+            <HStack flex="1" justify="flex-end" minW={{ base: "100%", md: "280px" }} maxW="420px">
+              <InputGroup size="sm" bg="white" borderRadius="md">
+                <InputLeftElement pointerEvents="none" h="full">
+                  <SearchIcon color="gray.400" />
+                </InputLeftElement>
+                <Input
+                  pl={9}
+                  placeholder="Buscar…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  borderRadius="md"
+                  aria-label="Filtrar usuarios"
+                />
+              </InputGroup>
+              <AbmModal getUsers={refreshUsers} />
+            </HStack>
           </HStack>
 
           <TableContainer>
@@ -177,8 +213,16 @@ const ABM = () => {
                       </Text>
                     </Td>
                   </Tr>
+                ) : filteredUsers.length === 0 ? (
+                  <Tr>
+                    <Td colSpan={6}>
+                      <Text py={8} textAlign="center" color="gray.500">
+                        Ningún usuario coincide con la búsqueda.
+                      </Text>
+                    </Td>
+                  </Tr>
                 ) : (
-                  sortedUsers.map((row) => {
+                  filteredUsers.map((row) => {
                     if (!row?.usuario) return null;
                     return (
                       <Tr key={row.usuario} _hover={{ bg: "orange.50" }}>
