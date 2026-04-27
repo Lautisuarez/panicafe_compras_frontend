@@ -1,5 +1,24 @@
 import { convertDate, parseArgNumber } from "./invoiceFormat";
 
+/** IVA importe de línea: preferimos subtot c/IVA − subtotal; si faltan, neto × alícuota. */
+export function parseLineIva(item) {
+  if (!item) return 0;
+  const st = parseArgNumber(item.subtotal);
+  const conIva = parseArgNumber(item.subtotalConIva);
+  if (conIva > 0 && st >= 0 && conIva >= st) {
+    return Math.max(0, conIva - st);
+  }
+  const m = String(item.alicuotaIva || "").match(/(\d+(?:[.,]\d+)?)\s*%?/);
+  if (!m) {
+    return st > 0 ? Math.round((st * 0.21 + Number.EPSILON) * 10000) / 10000 : 0;
+  }
+  const rate = parseArgNumber(m[1].replace(",", "."));
+  if (st > 0 && rate > 0) {
+    return Math.round((st * (rate / 100) + Number.EPSILON) * 10000) / 10000;
+  }
+  return 0;
+}
+
 export function buildMatchPayloadItems(inv) {
   return (inv.items || []).map((it) => ({
     producto: it.producto,
@@ -47,6 +66,7 @@ export function buildSaveStockPayload(invoice, selections) {
       articuloCodigo: selections[idx],
       cantidad: parseArgNumber(item.cantidad),
       precio: parseArgNumber(item.precioUnitario),
+      iva: parseLineIva(item),
     })),
   };
 }
