@@ -54,7 +54,6 @@ const InvoiceScanner = () => {
           matchData={s.matchData}
           selections={s.selections}
           selectionProducts={s.selectionProducts}
-          stockSaved={s.stockSaved}
           loading={s.loading}
           allProductsAssigned={s.allProductsAssigned}
           setStep={s.setStep}

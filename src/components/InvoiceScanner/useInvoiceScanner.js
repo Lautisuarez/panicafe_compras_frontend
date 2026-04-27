@@ -21,7 +21,6 @@ export function useInvoiceScanner() {
   const [matchData, setMatchData] = useState(null);
   const [selections, setSelections] = useState([]);
   const [selectionProducts, setSelectionProducts] = useState([]);
-  const [stockSaved, setStockSaved] = useState(false);
 
   const fileInputRef = useRef(null);
   const toast = useToast();
@@ -74,7 +73,6 @@ export function useInvoiceScanner() {
 
       setFileName(file.name);
       setLoading(true);
-      setStockSaved(false);
       setMatchData(null);
       setSelections([]);
       setSelectionProducts([]);
@@ -187,7 +185,6 @@ export function useInvoiceScanner() {
     try {
       const payload = buildSaveStockPayload(invoice, selections);
       const result = await saveStock(payload);
-      setStockSaved(true);
       toast({
         title: "Stock registrado",
         description:
@@ -196,6 +193,7 @@ export function useInvoiceScanner() {
         status: "success",
         duration: 5000,
       });
+      resetScanner();
     } catch (err) {
       toast({
         title: "Error al registrar stock",
@@ -215,7 +213,6 @@ export function useInvoiceScanner() {
     setMatchData(null);
     setSelections([]);
     setSelectionProducts([]);
-    setStockSaved(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -239,7 +236,6 @@ export function useInvoiceScanner() {
     matchData,
     selections,
     selectionProducts,
-    stockSaved,
     fileInputRef,
     allProductsAssigned,
     logoutHandler,

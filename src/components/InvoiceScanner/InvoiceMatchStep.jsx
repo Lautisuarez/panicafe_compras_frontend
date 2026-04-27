@@ -26,7 +26,6 @@ const InvoiceMatchStep = ({
   matchData,
   selections,
   selectionProducts,
-  stockSaved,
   loading,
   allProductsAssigned,
   setStep,
@@ -198,16 +197,14 @@ const InvoiceMatchStep = ({
           leftIcon={<MdShoppingBasket />}
           onClick={handleConfirmStock}
           isLoading={loading}
-          isDisabled={stockSaved || !allProductsAssigned}
+          isDisabled={!allProductsAssigned}
           title={
-            !stockSaved && !allProductsAssigned
+            !allProductsAssigned
               ? "Asigna un producto del catalogo a cada linea antes de confirmar"
               : undefined
           }
         >
-          {stockSaved
-            ? "Stock registrado"
-            : "Confirmar ingreso de stock"}
+          Confirmar ingreso de stock
         </Button>
       </HStack>
     </Box>
