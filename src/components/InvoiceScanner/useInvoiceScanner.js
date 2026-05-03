@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
 import { logout } from "../../protected/AuthService";
-import { parseInvoicePdf, matchInvoiceItems, saveStock } from "../../api/invoices";
+import { parseInvoicePdf, matchInvoiceItems, saveStock, fetchInvoiceStockLocales } from "../../api/invoices";
 import { EMPTY_ITEM } from "./constants";
 import {
   buildMatchPayloadItems,
@@ -21,6 +21,9 @@ export function useInvoiceScanner() {
   const [matchData, setMatchData] = useState(null);
   const [selections, setSelections] = useState([]);
   const [selectionProducts, setSelectionProducts] = useState([]);
+  const [invoiceLocales, setInvoiceLocales] = useState([]);
+  const [invoiceLocalesLoading, setInvoiceLocalesLoading] = useState(false);
+  const [selectedLocalId, setSelectedLocalId] = useState(null);
 
   const fileInputRef = useRef(null);
   const toast = useToast();
@@ -76,6 +79,8 @@ export function useInvoiceScanner() {
       setMatchData(null);
       setSelections([]);
       setSelectionProducts([]);
+      setInvoiceLocales([]);
+      setSelectedLocalId(null);
 
       try {
         const data = await parseInvoicePdf(file);
@@ -103,6 +108,38 @@ export function useInvoiceScanner() {
     },
     [toast]
   );
+
+  useEffect(() => {
+    if (step !== "match") {
+      return undefined;
+    }
+    let cancelled = false;
+    setInvoiceLocalesLoading(true);
+    fetchInvoiceStockLocales()
+      .then((rows) => {
+        if (cancelled) return;
+        setInvoiceLocales(Array.isArray(rows) ? rows : []);
+        setSelectedLocalId((prev) =>
+          prev != null ? prev : Array.isArray(rows) && rows[0] ? rows[0].id : null
+        );
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setInvoiceLocales([]);
+        toast({
+          title: "No se pudieron cargar los locales",
+          description: err.message,
+          status: "error",
+          duration: 5000,
+        });
+      })
+      .finally(() => {
+        if (!cancelled) setInvoiceLocalesLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [step, toast]);
 
   const goToMatchStep = async () => {
     if (!invoice || !(invoice.items || []).length) {
@@ -181,9 +218,21 @@ export function useInvoiceScanner() {
       return;
     }
 
+    if (selectedLocalId == null || !Number.isFinite(Number(selectedLocalId))) {
+      toast({
+        title: "Selecciona un local",
+        description: "Elegi el local de destino antes de confirmar el ingreso.",
+        status: "warning",
+        duration: 4000,
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const payload = buildSaveStockPayload(invoice, selections);
+      const payload = buildSaveStockPayload(invoice, selections, {
+        idlocal: selectedLocalId,
+      });
       const result = await saveStock(payload);
       toast({
         title: "Stock registrado",
@@ -213,6 +262,8 @@ export function useInvoiceScanner() {
     setMatchData(null);
     setSelections([]);
     setSelectionProducts([]);
+    setInvoiceLocales([]);
+    setSelectedLocalId(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -223,6 +274,12 @@ export function useInvoiceScanner() {
     itemCount > 0 &&
     selections.length >= itemCount &&
     items.every((_, idx) => selections[idx] != null);
+
+  const canConfirmStock =
+    allProductsAssigned &&
+    selectedLocalId != null &&
+    Number.isFinite(Number(selectedLocalId)) &&
+    !invoiceLocalesLoading;
 
   return {
     redirect,
@@ -236,8 +293,13 @@ export function useInvoiceScanner() {
     matchData,
     selections,
     selectionProducts,
+    invoiceLocales,
+    invoiceLocalesLoading,
+    selectedLocalId,
+    setSelectedLocalId,
     fileInputRef,
     allProductsAssigned,
+    canConfirmStock,
     logoutHandler,
     updateField,
     updateItem,

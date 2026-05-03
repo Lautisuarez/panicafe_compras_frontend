@@ -6,6 +6,8 @@ import {
   Flex,
   Heading,
   HStack,
+  Select,
+  Spinner,
   Table,
   Tbody,
   Td,
@@ -28,6 +30,11 @@ const InvoiceMatchStep = ({
   selectionProducts,
   loading,
   allProductsAssigned,
+  canConfirmStock,
+  invoiceLocales,
+  invoiceLocalesLoading,
+  selectedLocalId,
+  setSelectedLocalId,
   setStep,
   resetScanner,
   updateProductSelection,
@@ -97,6 +104,51 @@ const InvoiceMatchStep = ({
           letras. La lista de resultados se abre en una ventana flotante
           para que puedas verla completa mientras revisas la tabla.
         </Text>
+      </Box>
+
+      <Box
+        px={{ base: 4, md: 6 }}
+        py={4}
+        borderBottomWidth="1px"
+        borderColor="gray.100"
+        bg="white"
+      >
+        <Heading size="sm" mb={2} color="gray.800">
+          Local de destino
+        </Heading>
+        <Text fontSize="sm" color="gray.600" mb={3}>
+          Stock y balance se aplican al local elegido (num_local en sistema).
+        </Text>
+        {invoiceLocalesLoading ? (
+          <HStack>
+            <Spinner size="sm" />
+            <Text fontSize="sm" color="gray.600">
+              Cargando locales…
+            </Text>
+          </HStack>
+        ) : invoiceLocales.length === 0 ? (
+          <Text fontSize="sm" color="orange.700">
+            No hay locales disponibles. Revisa la conexion o la lista en el
+            servidor.
+          </Text>
+        ) : (
+          <Select
+            maxW="md"
+            size="md"
+            placeholder="Elegir local de destino…"
+            value={selectedLocalId != null ? String(selectedLocalId) : ""}
+            onChange={(e) => {
+              const v = e.target.value;
+              setSelectedLocalId(v === "" ? null : Number(v));
+            }}
+          >
+            {invoiceLocales.map((loc) => (
+              <option key={loc.id} value={String(loc.id)}>
+                {loc.nombre}
+              </option>
+            ))}
+          </Select>
+        )}
       </Box>
 
       <Box px={{ base: 2, md: 4 }} py={4} overflowX="auto">
@@ -197,10 +249,12 @@ const InvoiceMatchStep = ({
           leftIcon={<MdShoppingBasket />}
           onClick={handleConfirmStock}
           isLoading={loading}
-          isDisabled={!allProductsAssigned}
+          isDisabled={!canConfirmStock}
           title={
             !allProductsAssigned
               ? "Asigna un producto del catalogo a cada linea antes de confirmar"
+              : selectedLocalId == null || invoiceLocalesLoading
+              ? "Elegi el local de destino"
               : undefined
           }
         >

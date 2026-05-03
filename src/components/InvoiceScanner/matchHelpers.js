@@ -44,7 +44,11 @@ export function initialSelectionProductsFromMatch(matchResult, itemCount) {
   });
 }
 
-export function buildSaveStockPayload(invoice, selections) {
+export function buildSaveStockPayload(invoice, selections, { idlocal }) {
+  const idlocalNum = Number(idlocal);
+  if (!Number.isFinite(idlocalNum)) {
+    throw new Error("idlocal invalido");
+  }
   return {
     comprobante: {
       tipo: invoice.comprobante?.tipo || "A",
@@ -60,7 +64,7 @@ export function buildSaveStockPayload(invoice, selections) {
       iva21: parseArgNumber(invoice.totales?.iva21),
     },
     idproveedor: 0,
-    idlocal: 1,
+    idlocal: idlocalNum,
     iddeposito: 1,
     items: (invoice.items || []).map((item, idx) => ({
       articuloCodigo: selections[idx],

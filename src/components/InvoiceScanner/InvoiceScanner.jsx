@@ -56,6 +56,11 @@ const InvoiceScanner = () => {
           selectionProducts={s.selectionProducts}
           loading={s.loading}
           allProductsAssigned={s.allProductsAssigned}
+          canConfirmStock={s.canConfirmStock}
+          invoiceLocales={s.invoiceLocales}
+          invoiceLocalesLoading={s.invoiceLocalesLoading}
+          selectedLocalId={s.selectedLocalId}
+          setSelectedLocalId={s.setSelectedLocalId}
           setStep={s.setStep}
           resetScanner={s.resetScanner}
           updateProductSelection={s.updateProductSelection}

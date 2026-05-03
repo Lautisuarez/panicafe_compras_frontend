@@ -19,6 +19,25 @@ const parseJsonSafe = async (response) => {
 };
 
 /**
+ * Locales permitted for invoice stock entry (num_local / id in API).
+ * GET /facturas/locales
+ */
+export const fetchInvoiceStockLocales = async () => {
+  const response = await fetch(`${configData.SERVER_URL}/facturas/locales`, {
+    method: "GET",
+    headers: getAuthHeader(),
+  });
+
+  const data = await parseJsonSafe(response);
+  if (!response.ok) {
+    throw new Error(
+      data.mensaje || data.message || `Error ${response.status}`
+    );
+  }
+  return data;
+};
+
+/**
  * Upload a PDF and get parsed invoice data back.
  * POST /facturas/parse  (multipart/form-data)
  */
